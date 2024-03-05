@@ -6,7 +6,7 @@ class Transaction extends Model {}
 Transaction.init({
     userID: { type: DataTypes.INTEGER, allowNull: false },
     come: { type: DataTypes.STRING, allowNull: false },
-    type: DataTypes.DECIMAL(10, 2),
+    valueOfTransaction: DataTypes.DECIMAL(10, 2),
     typeOfTransaction: { type: DataTypes.STRING, allowNull: false },
     dateOfTransaction: { type: DataTypes.DATE, allowNull: false }
 }, {

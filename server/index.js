@@ -5,6 +5,9 @@ const sequelize = require('./db'); // Выполняется код из db.js, 
 const PORT = process.env.PORT || 5000; // Выбор порта
 const cors = require("cors")
 
+const authRouter = require('./routes/authRouter');
+const userRouter = require('./routes/userRouter');
+
 const User = require('./models/user')
 const Transaction = require('./models/transaction')
 
@@ -13,11 +16,13 @@ const app = express(); // Создание экземпляра express
 app.use(cors()) // Даем возможность приложению использовать CORS
 app.use(express.json()) // Даем возможность приложению парсить JSON
 
-/*
-app.get('/', (req, res) =>{
+
+/*app.get('/', (req, res) =>{
     res.status(200).json({message: 'Работает, епти!'})
-})
-*/
+})*/
+
+app.use("/auth", authRouter);
+app.use("/user", userRouter); // Для пользователя не целесообразно использовать id, т.к. есть токены
 
 // Все функции для работы с БД асинхронные
 const start = async ()=>{
