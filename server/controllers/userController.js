@@ -64,8 +64,22 @@ class UserController {
         }
     }
 
-    async deleteTransaction(req, res){
+    async deleteTransaction(req, res) {
+        try {
+            const transactionID = req.params.transactionID; // Получаем ID транзакции из URL параметра, т.е. значение ID получается из параметра маршрута
 
+            // Удаляем транзакцию из базы данных
+            const deletedTransaction = await Transaction.destroy({ where: { id: transactionID } });
+
+            if (!deletedTransaction) {
+                return res.status(404).json({ message: 'Транзакция не найдена' });
+            }
+
+            res.status(200).json({ message: 'Транзакция успешно удалена' });
+        } catch (error) {
+            console.error(error);
+            res.status(500).json({ message: 'Произошла ошибка при удалении транзакции' });
+        }
     }
 }
 
