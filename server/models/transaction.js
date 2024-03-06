@@ -8,7 +8,7 @@ Transaction.init({
     userID: { type: DataTypes.INTEGER, allowNull: false },
     come: { type: DataTypes.STRING, allowNull: false },
     valueOfTransaction: DataTypes.DECIMAL(10, 2),
-    typeOfTransaction: { type: DataTypes.STRING, allowNull: false },
+    typeOfTransactionID: { type: DataTypes.INTEGER, allowNull: false },
     dateOfTransaction: { type: DataTypes.DATE, allowNull: false }
 }, {
     sequelize,

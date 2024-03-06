@@ -8,8 +8,9 @@ const cors = require("cors")
 const authRouter = require('./routes/authRouter');
 const userRouter = require('./routes/userRouter');
 
-const User = require('./models/user')
+const User = require('./models/user') // Хоть эти модели нигде и не используются, я так понял, что тут происходит инициализация моделей и соответственно их дальнейшее создание в бд
 const Transaction = require('./models/transaction')
+const typesOfTransactions = require('./models/typesOfTransactions')
 
 const app = express(); // Создание экземпляра express
 
