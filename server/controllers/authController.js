@@ -9,9 +9,11 @@ const bodyParser = require('body-parser');
 const User = require('../models/user');
 
 
-const generateAccessToken = (id, roles) =>{
+
+const generateAccessToken = (id, email) =>{
     const payload = {
-        id
+        id,
+        email
     }
     return jwt.sign(payload, secret, {expiresIn:"24h"});
 }
@@ -79,15 +81,16 @@ class authController {
         try {
             const {email, password} = req.body;
             const user = await User.findOne({email});
+
             if (!user) {
                 return res.status(400).json({message: `Пользователь ${email} не найден!`});
             }
             const validPassword = bcrypt.compareSync(password, user.password);
+
             if (!validPassword) {
                 return res.status(400).json({message: `Введен неверный пароль!`});
             }
             const token = generateAccessToken(user._id)
-            //res.cookie('token', token);
             const obj = {
                 token: token,
                 message: "Авторизация успешна!"
@@ -99,6 +102,11 @@ class authController {
             res.status(400).json({message: 'Login error'});
         }
     }
+    async check(req, res, next) {
+        const token = generateAccessToken(req.body.id, req.body.email)
+        return res.json({token})
+    }
+
 }
 
 
