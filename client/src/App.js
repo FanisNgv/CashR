@@ -3,6 +3,10 @@ import {BrowserRouter, Navigate, Route, Router, Routes} from "react-router-dom";
 import PHome from "./Pages/home";
 import PLogin from "./Pages/login"
 import PRegistration from "./Pages/registration"
+import PTransactions from "./Pages/transactions"
+import PrivateRoute from "./Components/PrivateRoute/PrivateRoute";
+
+
 
 function App() {
     return (
@@ -11,6 +15,10 @@ function App() {
                 <Route path="/" element={<PHome />} />
                 <Route path="/login" element={<PLogin />} />
                 <Route path="/registration" element={<PRegistration />}/>
+
+                <Route exct path='/transactions' element={<PrivateRoute/>}>
+                    <Route exact path='/transactions' element={<PTransactions/>}/>
+                </Route>
 
                 {/*<Route path="/registration" element={<PRegistration />} />
                 <Route path="/login" element={<PLogin />} />

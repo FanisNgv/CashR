@@ -1,0 +1,123 @@
+.infoRow{
+    display: flex;
+    justify-content: space-between;
+}
+.infoRow h1{
+    font-size: 20px;
+}
+.filterRow h2{
+    font-size: 25px;
+    color: white;
+    font-family: 'Noto Sans', sans-serif;
+}
+.resultRow{
+    display: flex;
+    justify-content: space-between;
+    border: 2px solid #EF233C;
+    border-radius: 10px;
+    margin-right: 75px;
+}
+.resultRow h2{
+    font-size: 25px;
+    color: white;
+    font-family: 'Noto Sans', sans-serif;
+}
+
+.userName{
+    cursor: pointer;
+
+}
+.userName h1:hover{
+    color: #d5d5d5;
+}
+.filterRow .material-symbols-outlined{
+    cursor: pointer;
+
+}
+.filterRow .material-symbols-outlined:hover{
+    color: #d5d5d5;
+}
+
+.transRow{
+    font-size: 20px;
+    color: white;
+    font-family: 'Noto Sans', sans-serif;
+    border: 2px solid #EF233C;
+    border-radius: 10px;
+    display: flex;
+    justify-content: space-between;
+}
+.comeContainer {
+    display: flex;
+    justify-content: center;
+}
+
+.comeIncome{
+    color: lawngreen;
+}
+.comeOutcome{
+    color: #EF233C;
+}
+.transHeader{
+    display: flex;
+    justify-content: space-between;
+}
+
+#addGap{
+    height: 100px;
+}
+
+.filterRow{
+    display: flex;
+    justify-content: space-between;
+}
+footer{
+    line-height: 42px;
+    align-items: center;
+    display: flex;
+    position: absolute;
+    bottom: -55px;
+    height: 55px;
+    width: 100%;
+    background-color: #d90429;
+    justify-content: center;
+    gap: 30px;
+}
+footer .fa-brands{
+    padding-top: 5px;
+    font-size: 30px;
+    line-height: 50px;
+    transition: .6s;
+    color: #2B2D42;
+}
+.PieCharts{
+    margin-top: 50px;
+    display: flex;
+    justify-content: center;
+    gap:200px;
+}
+.PieBars{
+    margin-top: 100px;
+    display: flex;
+    justify-content: center;
+    gap:200px;
+}
+.fade-enter {
+    opacity: 0;
+}
+
+.fade-enter-active {
+    opacity: 1;
+    transition: opacity 500ms ease-in;
+}
+
+.fade-exit {
+    opacity: 1;
+}
+
+.fade-exit-active {
+    opacity: 0;
+    transition: opacity 500ms ease-in;
+}
+
+
