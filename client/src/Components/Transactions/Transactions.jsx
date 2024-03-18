@@ -17,8 +17,7 @@ const MainPage = () => {
     const [user, setUser] = useState({
         lastname: "",
         firstname: "",
-        email: "",
-        role: ""
+        email: ""
     });
     const [users, setUsers] = useState([]);
     const [menuActive, setMenuActive] = useState(false);
@@ -83,7 +82,7 @@ const MainPage = () => {
                 });
 
                 await setUser({
-                    _id: response._id,
+                    id: response.id,
                     lastname: response.lastname,
                     firstname: response.firstname,
                     email: response.email,
@@ -93,7 +92,7 @@ const MainPage = () => {
                 const transactionsResponse = await fetch('http://localhost:5000/user/getTransactions', {
                     method: 'POST',
                     headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({userID: response._id}),
+                    body: JSON.stringify({userID: response.id}),
                 });
 
                 const transactionsData = await transactionsResponse.json();
@@ -142,63 +141,19 @@ const MainPage = () => {
 
 
     return (
-        <div className="Users">
+        <div className="Transactions">
             <header>
                 <div className="MainBar">
-                    <h1 className="logo" onClick={toggleMenu}>CashR</h1>
+                    <h1 className="Logo" onClick={toggleMenu}>CashR</h1>
                     <div className="userName" onClick={toggleProfile}>
-                        <div className="projectIcon">
+                        <div className="userIcon">
                             <span className="material-symbols-outlined">person</span>
                         </div>
                         <h1>{user.lastname} {user.firstname}</h1>
                     </div>
                 </div>
             </header>
-            <div className="mainContent">
-                <div className="filterRow">
-                    <h1>Транзакции:</h1>
-                    <span onClick={toggleModalFilter} className="material-symbols-outlined">filter_list</span>
-                </div>
 
-
-                <div className="transHeader">
-                    <div><h1>Сумма</h1></div>
-                    <div><h1>Тип транзакции</h1></div>
-                    <div><h1>Дата транзакции</h1></div>
-                </div>
-
-                <div>
-                    {sortedTransactions && sortedTransactions.map((transaction) => (
-                        <div className="transRow" key={transaction._id}>
-                            <div className='comeContainer'>
-                                <div className='comeOutcome'>
-                                    <h2>{transaction.come === 'Outcome' && transaction.valueOfTransaction}</h2></div>
-                                <div className='comeIncome'>
-                                    <h2>{transaction.come === 'Income' && '+' + transaction.valueOfTransaction}</h2>
-                                </div>
-                            </div>
-                            <div><h2>{transaction.typeOfTransaction}</h2></div>
-                            <div><h2>{new Intl.DateTimeFormat('ru-Ru', {
-                                year: 'numeric',
-                                month: 'numeric',
-                                day: 'numeric',
-                                hour: 'numeric',
-                                minute: 'numeric',
-                                second: 'numeric'
-                            }).format(new Date(transaction.dateOfTransaction))}</h2></div>
-                        </div>
-                    ))}
-                </div>
-            </div>
-
-
-
-
-            <div id="addGap"></div>
-            <footer>
-                <a href="https://vk.com/fanis_ng" target="_blank"><i className="fa-brands fa-vk"></i></a>
-                <a href="https://t.me/fanis_ng" target="_blank"><i className="fa-brands fa-telegram"></i></a>
-            </footer>
         </div>
     );
 };

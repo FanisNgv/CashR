@@ -32,8 +32,10 @@ class authController {
                     console.log(err); // Вывод информации об ошибке в консоль
                     return res.status(401).json({error: 'Unauthorized'});
                 }
-                const userId = decoded.id;
-                const user = await User.findOne({_id: userId});
+                const userID = decoded.id;
+                const user = await User.findOne({
+                    where: { id: userID }
+                });
 
                 if (!user) {
                     return res.status(404).json({error: 'User not found'});
@@ -54,7 +56,7 @@ class authController {
             }
             const {firstName, lastName, email, password} = req.body;
             const candidate = await User.findOne({
-                where: { email: email },
+                where: { email: email }
             });
             if (candidate) {
                 return res.status(400).json({message: 'Пользователь с такой почтой уже существует'});
@@ -93,7 +95,7 @@ class authController {
             if (!validPassword) {
                 return res.status(400).json({message: `Введен неверный пароль!`});
             }
-            const token = generateAccessToken(user._id)
+            const token = generateAccessToken(user.id)
             const obj = {
                 token: token,
                 message: "Авторизация успешна!"
