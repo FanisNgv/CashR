@@ -5,5 +5,5 @@ const typesOfTransactions = require('../models/typesOfTransactions')
 User.hasMany(Transaction);
 Transaction.belongsTo(User, {foreignKey: 'UserID', as: 'User'});
 
-typesOfTransactions.hasMany(Transaction);
-Transaction.belongsTo(typesOfTransactions, { foreignKey: 'typeOfTransactionID', as: 'typesOfTransactions' });
+User.hasMany(typesOfTransactions);
+typesOfTransactions.belongsTo(User, { foreignKey: 'UserID', as: 'User' });

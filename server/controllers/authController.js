@@ -7,6 +7,7 @@ const express = require("express");
 const path = require("path")
 const bodyParser = require('body-parser');
 const User = require('../models/user');
+const { createDefaultTransactionTypes } = require('../models/typesOfTransactions');
 
 
 
@@ -70,6 +71,12 @@ class authController {
                 balance: 0
             })
             await user.save();
+
+            const registeredUser = await User.findOne({
+                where: { email: email },
+            });
+            await createDefaultTransactionTypes(registeredUser.id);
+
             const obj = {
                 isRegistered: true,
                 message: "Регистрация прошла успешно!"

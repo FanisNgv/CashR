@@ -19,6 +19,7 @@ const MainPage = () => {
         firstname: "",
         email: ""
     });
+
     const [users, setUsers] = useState([]);
     const [menuActive, setMenuActive] = useState(false);
     const[profileActive, setProfileActive] = useState(false);
@@ -153,6 +154,7 @@ const MainPage = () => {
                     </div>
                 </div>
             </header>
+
 
         </div>
     );

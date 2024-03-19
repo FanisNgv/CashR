@@ -64,6 +64,7 @@ class UserController {
         }
     }
 
+
     async deleteTransaction(req, res) {
         try {
             const transactionID = req.params.transactionID; // Получаем ID транзакции из URL параметра, т.е. значение ID получается из параметра маршрута

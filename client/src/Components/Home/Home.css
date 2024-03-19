@@ -28,13 +28,6 @@ header{
     border-radius: 15px;
 }
 
-.Logo {
-    background: linear-gradient(90deg, #26b2ad, #EF233C, #ffe900);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-size: 200% 200%;
-    animation: rainbow 5s infinite;
-}
 
 @keyframes rainbow {
     0% {
@@ -123,7 +116,12 @@ header{
 .text-3{
     text-align: center;
     font-size: 50px;
-    animation:move-text-3 2s forwards;
+    animation:move-text-3 2s forwards, rainbow 5s infinite;
+    background: linear-gradient(to right, #4336b2, #4942E4, #E6B9DE, #FAE7F3);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-size: 200% 200%;
+
 }
 
 header h1 {
