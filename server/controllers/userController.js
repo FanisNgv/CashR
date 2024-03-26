@@ -74,10 +74,28 @@ class UserController {
                 where: { userID: userID }
             });
 
+<<<<<<< HEAD
             res.status(200).json(typesOfTransactions); // отправляем клиенту все транзакции со статусом 200
         } catch (error) {
             console.error(error);
             res.status(500).json({ message: 'Произошла ошибка при получении типа транзакций'});
+=======
+    async deleteTransaction(req, res) {
+        try {
+            const transactionID = req.params.transactionID; // Получаем ID транзакции из URL параметра, т.е. значение ID получается из параметра маршрута
+
+            // Удаляем транзакцию из базы данных
+            const deletedTransaction = await Transaction.destroy({ where: { id: transactionID } });
+
+            if (!deletedTransaction) {
+                return res.status(404).json({ message: 'Транзакция не найдена' });
+            }
+
+            res.status(200).json({ message: 'Транзакция успешно удалена' });
+        } catch (error) {
+            console.error(error);
+            res.status(500).json({ message: 'Произошла ошибка при удалении транзакции' });
+>>>>>>> c55257bca6f830e073b8803cc16b72c6d6f155a2
         }
     }
 
