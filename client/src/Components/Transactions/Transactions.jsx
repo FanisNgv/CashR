@@ -20,52 +20,13 @@ const MainPage = () => {
         email: ""
     });
 
-    const [users, setUsers] = useState([]);
-    const [menuActive, setMenuActive] = useState(false);
-    const[profileActive, setProfileActive] = useState(false);
-    const[modalFilterIsOpened, setModalFilterIsOpened] = useState(false);
-    const navigate = useNavigate();
 
-    const [come, setCome] = useState();
     const [addTransactionIsOpened, setAddTransactionIsOpened] = useState(false);
-    const [typesOfOutcomes, setTypesOfOutcomes] = useState(["Еда", "Здоровье", "Спорт", "Жилье"]);
-    const [typesOfIncomes, setTypesOfIncomes] = useState(["Зарплата", "Стипендия"]);
+    const [typesOfOutcomes, setTypesOfOutcomes] = useState([]);
+    //const [typesOfIncomes, setTypesOfIncomes] = useState([]);
     const [transactions, setTransactions] = useState([]);
-    const [sortedTransactions, setSortedTransactions] = useState([]);
 
-    const [startDate, setStartDate] = useState(new Date());
-    const [endDate, setEndDate] = useState(null);
 
-    const[leftBorder, setLeftBorder] = useState();
-    const[rightBorder, setRightBorder] = useState();
-
-    const MenuItems = [{value: "Транзакции", action: handleTransClick, icon: "trans"},{
-        value: "Анализ транзакций",
-        action: handleTransAnalyseClick,
-        icon: "analyse"
-    }, {
-        value: "Добавить расход/доход",
-        action: handleAddTransClick,
-        icon: "coin"
-    }];
-
-    const ProfileItems=[{value: "Выйти", action: handleLogoutClick, icon: "logout"}]
-
-    function handleTransAnalyseClick(){
-        navigate('/transAnalyse');
-    }
-    function handleTransClick(){
-        navigate('/transactions');
-    }
-    function handleLogoutClick() {
-        navigate('/login');
-        localStorage.clear();
-    }
-
-    function handleAddTransClick() {
-        setMenuActive(false);
-        setAddTransactionIsOpened(true);
-    }
 
     useEffect(() => {
         setIsLoading(true);
@@ -99,6 +60,15 @@ const MainPage = () => {
                 const transactionsData = await transactionsResponse.json();
                 setTransactions(transactionsData);
 
+                const typesOfTransaction = await fetch('http://localhost:5000/user/getTypesOfTransactions', {
+                    method: 'GET',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({userID: response.id}),
+                });
+
+                const typesOfTransactionsData = await typesOfTransaction.json()
+                await setTypesOfOutcomes(typesOfTransactionsData)
+                console.log(typesOfOutcomes)
 
             } catch (error) {
                 console.error(error.message);
@@ -109,44 +79,12 @@ const MainPage = () => {
         fetchData();
     }, []);
 
-    function getDateValue(dateString) {
-        return new Date(dateString).getTime();
-    }
-    useEffect(()=>{
-        const srtdTransactions = [...transactions].sort(function(a, b) {
-            return getDateValue(b.dateOfTransaction) - getDateValue(a.dateOfTransaction);
-        });
-        setSortedTransactions(srtdTransactions);
-    },[transactions])
-
-    function toggleMenu() {
-        setMenuActive(!menuActive);
-    }
-    function toggleProfile(){
-        setProfileActive(!profileActive);
-    }
-    function toggleModalFilter(){
-        setModalFilterIsOpened(!modalFilterIsOpened);
-    }
-
-    const[standartSet, setStandartSet] = useState([]);
-    function getDateValue(dateString) {
-        return new Date(dateString).getTime();
-    }
-    useEffect(()=>{
-        const srtdTransactions = [...transactions].sort(function(a, b) {
-            return getDateValue(b.dateOfTransaction) - getDateValue(a.dateOfTransaction);
-        });
-        setStandartSet(srtdTransactions);
-    },[transactions])
-
-
     return (
         <div className="Transactions">
             <header>
                 <div className="MainBar">
-                    <h1 className="Logo" onClick={toggleMenu}>CashR</h1>
-                    <div className="userName" onClick={toggleProfile}>
+                    <h1 className="Logo">CashR</h1>
+                    <div className="userName">
                         <div className="userIcon">
                             <span className="material-symbols-outlined">person</span>
                         </div>
@@ -154,8 +92,6 @@ const MainPage = () => {
                     </div>
                 </div>
             </header>
-
-
         </div>
     );
 };

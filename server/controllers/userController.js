@@ -8,10 +8,12 @@ const bodyParser = require('body-parser');
 
 const User = require('../models/user');
 const Transaction = require('../models/transaction')
+const TypesOfTransactions = require('../models/typesOfTransactions')
 
-const { Op } = require('sequelize'); // Импортируем операторы для Sequelize
+const { Op} = require('sequelize'); // Импортируем операторы для Sequelize
 
 class UserController {
+
     async createTransaction(req, res) {
         try {
             const { userID, come, valueOfTransaction, typeOfTransaction, dateOfTransaction } = req.body; // парсим тело http ответа по этим переменным
@@ -55,7 +57,9 @@ class UserController {
             const { userID } = req.body;
 
             // Находим все транзакции пользователя
-            const transactions = await Transaction.findAll({ where: { userID } });
+            const transactions = await Transaction.findAll({
+                where: { userID: userID }
+            });
 
             res.status(200).json(transactions); // отправляем клиенту все транзакции со статусом 200
         } catch (error) {
@@ -63,7 +67,19 @@ class UserController {
             res.status(500).json({ message: 'Произошла ошибка при получении транзакций' });
         }
     }
+    async getTypesOfTransactions(req, res) {
+        try {
+            const { userID } = req.body;
+            const typesOfTransactions = await TypesOfTransactions.findAll({
+                where: { userID: userID }
+            });
 
+            res.status(200).json(typesOfTransactions); // отправляем клиенту все транзакции со статусом 200
+        } catch (error) {
+            console.error(error);
+            res.status(500).json({ message: 'Произошла ошибка при получении типа транзакций'});
+        }
+    }
 
     async deleteTransaction(req, res) {
         try {

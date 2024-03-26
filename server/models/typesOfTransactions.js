@@ -34,4 +34,4 @@ async function createDefaultTransactionTypes(userId) {
     }
 }
 
-module.exports = { typesOfTransactions, createDefaultTransactionTypes };
+module.exports = typesOfTransactions;
