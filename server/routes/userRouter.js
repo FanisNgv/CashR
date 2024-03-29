@@ -9,6 +9,6 @@ router.post('/createTransaction', authMiddleware, controller.createTransaction);
 router.get('/getTransactions', authMiddleware, controller.getTransactions);
 router.delete('/deleteTransaction/:transactionID', authMiddleware, controller.deleteTransaction);
 router.put('/updateTransaction/:transactionID', authMiddleware, controller.updateTransaction);
-router.get('/getTypesOfTransactions', authMiddleware, controller.getTypesOfTransactions);
+router.post('/getTypesOfTransactions', authMiddleware, controller.getTypesOfTransactions);
 
 module.exports = router;

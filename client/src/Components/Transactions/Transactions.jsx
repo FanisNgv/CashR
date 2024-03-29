@@ -51,18 +51,21 @@ const MainPage = () => {
                     balance: response.balance,
                 });
 
-                const transactionsResponse = await fetch('http://localhost:5000/user/getTransactions', {
+                /*const transactionsResponse = await fetch('http://localhost:5000/user/getTransactions', {
                     method: 'POST',
                     headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify({userID: response.id}),
                 });
 
                 const transactionsData = await transactionsResponse.json();
-                setTransactions(transactionsData);
+                setTransactions(transactionsData);*/
 
                 const typesOfTransaction = await fetch('http://localhost:5000/user/getTypesOfTransactions', {
-                    method: 'GET',
-                    headers: {'Content-Type': 'application/json'},
+                    method: 'POST',
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }, 
                     body: JSON.stringify({userID: response.id}),
                 });
 
