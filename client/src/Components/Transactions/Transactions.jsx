@@ -23,7 +23,7 @@ const MainPage = () => {
 
     const [addTransactionIsOpened, setAddTransactionIsOpened] = useState(false);
     const [typesOfOutcomes, setTypesOfOutcomes] = useState([]);
-    //const [typesOfIncomes, setTypesOfIncomes] = useState([]);
+    const [typesOfIncomes, setTypesOfIncomes] = useState([]);
     const [transactions, setTransactions] = useState([]);
 
 
@@ -51,13 +51,16 @@ const MainPage = () => {
                     balance: response.balance,
                 });
 
-                /*const transactionsResponse = await fetch('http://localhost:5000/user/getTransactions', {
+                /* const transactionsResponse = await fetch('http://localhost:5000/user/getTransactions', {
                     method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },                    
                     body: JSON.stringify({userID: response.id}),
                 });
 
-                const transactionsData = await transactionsResponse.json();
+                const transactionsData = await transactionsResponse.json(); 
                 setTransactions(transactionsData);*/
 
                 const typesOfTransaction = await fetch('http://localhost:5000/user/getTypesOfTransactions', {
@@ -70,8 +73,25 @@ const MainPage = () => {
                 });
 
                 const typesOfTransactionsData = await typesOfTransaction.json()
-                await setTypesOfOutcomes(typesOfTransactionsData)
-                console.log(typesOfOutcomes)
+
+                const outcomes = [];
+                const incomes = [];
+
+                // Разделяем данные на массивы typesOfOutcomes и typesOfIncomes
+                typesOfTransactionsData.forEach(transaction => {
+                    if (transaction.isIncome) {
+                        incomes.push(transaction);
+                    } else {
+                        outcomes.push(transaction);
+                    }
+                });
+
+                
+                await setTypesOfOutcomes(outcomes);
+                await setTypesOfIncomes(incomes);
+
+                console.log(typesOfOutcomes);
+                console.log(typesOfIncomes);
 
             } catch (error) {
                 console.error(error.message);
@@ -95,6 +115,23 @@ const MainPage = () => {
                     </div>
                 </div>
             </header>
+            <div>
+                <h2>Типы расходов:</h2>
+                <ul>
+                    {typesOfOutcomes.map((outcome, index) => (
+                        <li key={index}>{outcome.name}</li>
+                    ))}
+                </ul>
+            </div>
+
+            <div>
+                <h2>Типы доходов:</h2>
+                <ul>
+                    {typesOfIncomes.map((income, index) => (
+                        <li key={index}>{income.name}</li>
+                    ))}
+                </ul>
+            </div>
         </div>
     );
 };
