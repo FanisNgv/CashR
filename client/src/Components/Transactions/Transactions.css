@@ -70,9 +70,36 @@ button:active {
     transform: translateY(3px);
     transition-duration: 0.3s;
 }
-/* .fullWidthSkeleton{
-    width: 100%;
-} */
+.fullWidthSkeleton {
+    opacity: 1;
+    /* Начальная непрозрачность */
+    transition: opacity 1.5s ease;
+    /* Плавная анимация исчезновения */
+} 
+.transRow {
+    font-size: 20px;
+    color: white;
+    font-family: 'Noto Sans', sans-serif;
+    border: 2px solid #EF233C;
+    border-radius: 10px;
+    display: flex;
+    justify-content: space-between;
+}
+.Transactions .transHeader {
+    display: flex;
+    justify-content: space-between;
+    font-size: 36px;
+    color: white;
+    font-family: 'Noto Sans', sans-serif;
+    margin:20px;
+}
+.comeIncome {
+    color: lawngreen;
+}
+
+.comeOutcome {
+    color: #EF233C;
+}
 .material-symbols-outlined{
     color:white;
     font-size: 40px;
