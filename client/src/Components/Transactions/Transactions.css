@@ -11,7 +11,7 @@
     color: white;
 }
 .Transactions {
-    background-image: url("../../Public/CashR.jpg");
+    background-color: #2B2D42;
     width: 100%;
     height: 100vh;
     overflow: scroll;
@@ -46,7 +46,60 @@
     flex-direction: row;
     gap: 5px;
 }
+button {
+    cursor: pointer;
+    font-size: 16px;
+    padding: 10px;
+    width: 15%;
+    margin-top: 20px;
+    margin-left: 20px;
+    background-color: #202231;
+    color: white;
+    text-align: center;
+    border: 2px solid #EF233C;
+    border-radius: 10px;
+    transition-duration: 0.5s;
+}
+button:hover {
+    background-color: #ef233c;
+    cursor: pointer;
+}
+button:active {
+    background-color: #ef233c;
+    box-shadow: 0 5px #ef233c;
+    transform: translateY(3px);
+    transition-duration: 0.3s;
+}
+.fullWidthSkeleton {
+    opacity: 1;
+    /* Начальная непрозрачность */
+    transition: opacity 1.5s ease;
+    /* Плавная анимация исчезновения */
+} 
+.transRow {
+    font-size: 20px;
+    color: white;
+    font-family: 'Noto Sans', sans-serif;
+    border: 2px solid #EF233C;
+    border-radius: 10px;
+    display: flex;
+    justify-content: space-between;
+}
+.Transactions .transHeader {
+    display: flex;
+    justify-content: space-between;
+    font-size: 36px;
+    color: white;
+    font-family: 'Noto Sans', sans-serif;
+    margin:20px;
+}
+.comeIncome {
+    color: lawngreen;
+}
 
+.comeOutcome {
+    color: #EF233C;
+}
 .material-symbols-outlined{
     color:white;
     font-size: 40px;

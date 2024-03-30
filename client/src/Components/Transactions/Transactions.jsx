@@ -3,6 +3,8 @@ import './Transactions.css';
 import axios from 'axios';
 import {useNavigate} from 'react-router-dom';
 import {Backdrop, CircularProgress} from '@mui/material';
+import Box from '@mui/material/Box';
+import Skeleton from '@mui/material/Skeleton';
 
 import {Link} from "react-router-dom";
 //import Menu from "../Menu/Menu";
@@ -23,8 +25,9 @@ const MainPage = () => {
 
     const [addTransactionIsOpened, setAddTransactionIsOpened] = useState(false);
     const [typesOfOutcomes, setTypesOfOutcomes] = useState([]);
-    //const [typesOfIncomes, setTypesOfIncomes] = useState([]);
+    const [typesOfIncomes, setTypesOfIncomes] = useState([]);
     const [transactions, setTransactions] = useState([]);
+    const [sortedTransactions, setSortedTransactions] = useState([]);
 
 
 
@@ -53,31 +56,76 @@ const MainPage = () => {
 
                 const transactionsResponse = await fetch('http://localhost:5000/user/getTransactions', {
                     method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },                    
                     body: JSON.stringify({userID: response.id}),
                 });
 
-                const transactionsData = await transactionsResponse.json();
+                const transactionsData = await transactionsResponse.json(); 
                 setTransactions(transactionsData);
 
                 const typesOfTransaction = await fetch('http://localhost:5000/user/getTypesOfTransactions', {
-                    method: 'GET',
-                    headers: {'Content-Type': 'application/json'},
+                    method: 'POST',
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }, 
                     body: JSON.stringify({userID: response.id}),
                 });
 
                 const typesOfTransactionsData = await typesOfTransaction.json()
-                await setTypesOfOutcomes(typesOfTransactionsData)
-                console.log(typesOfOutcomes)
+
+                const outcomes = [];
+                const incomes = [];
+
+                // Разделяем данные на массивы typesOfOutcomes и typesOfIncomes
+                typesOfTransactionsData.forEach(transaction => {
+                    if (transaction.isIncome) {
+                        incomes.push(transaction);
+                    } else {
+                        outcomes.push(transaction);
+                    }
+                });
+
+                
+                await setTypesOfOutcomes(outcomes);
+                await setTypesOfIncomes(incomes);
 
             } catch (error) {
                 console.error(error.message);
             }
-
             setIsLoading(false);
         });
         fetchData();
     }, []);
+
+
+    function toggleAddTransaction() {
+        setAddTransactionIsOpened(!addTransactionIsOpened);
+        setIsLoading(!isLoading);
+    }
+    function getDateValue(dateString) {
+        return new Date(dateString).getTime();
+    }
+    useEffect(() => {
+        const srtdTransactions = [...transactions].sort(function (a, b) {
+            return getDateValue(b.dateOfTransaction) - getDateValue(a.dateOfTransaction);
+        });
+        setSortedTransactions(srtdTransactions);
+    }, [transactions])
+
+    const [standartSet, setStandartSet] = useState([]);
+    function getDateValue(dateString) {
+        return new Date(dateString).getTime();
+    }
+    useEffect(() => {
+        const srtdTransactions = [...transactions].sort(function (a, b) {
+            return getDateValue(b.dateOfTransaction) - getDateValue(a.dateOfTransaction);
+        });
+        setStandartSet(srtdTransactions);
+    }, [transactions])
 
     return (
         <div className="Transactions">
@@ -92,6 +140,63 @@ const MainPage = () => {
                     </div>
                 </div>
             </header>
+            <div className="MainContent">
+                <div className="firstRow">
+                    <button onClick={toggleAddTransaction}>Добавить транзакцию</button>    
+                </div>    
+            </div>
+            <div className="transHeader">
+                <div><p>Сумма</p></div>
+                <div><p>Тип транзакции</p></div>
+                <div><p>Дата транзакции</p></div>
+            </div>
+            {isLoading ? (
+                <div className="fullWidthSkeleton">
+                    <Box sx={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                        <Skeleton variant="rounded" animation="wave" height={37} />
+                        <Skeleton variant="rounded" height={37} />
+                        <Skeleton variant="rounded" animation="wave" height={37} />
+                        <Skeleton variant="rounded" height={37} />
+                        <Skeleton variant="rounded" animation="wave" height={37} />
+                        <Skeleton variant="rounded" height={37} />
+                        <Skeleton variant="rounded" animation="wave" height={37} />
+                        <Skeleton variant="rounded" height={37} />
+                        <Skeleton variant="rounded" animation="wave" height={37} />
+                        <Skeleton variant="rounded" height={37} />
+                        <Skeleton variant="rounded" animation="wave" height={37} />
+                    </Box>
+
+                </div>
+            ) : (
+                    <div>
+                        {sortedTransactions && sortedTransactions.map((transaction) => (
+                            <div className="transRow" key={transaction._id}>
+                                <div className='comeContainer'>
+                                    <div className='comeOutcome'>
+                                        <h2>{transaction.come === 'Outcome' && '-' + transaction.valueOfTransaction}</h2></div>
+                                    <div className='comeIncome'>
+                                        <h2>{transaction.come === 'Income' && '+' + transaction.valueOfTransaction}</h2>
+                                    </div>
+                                </div>
+                                <div><h2>{transaction.typeOfTransaction}</h2></div>
+                                <div><h2>{new Intl.DateTimeFormat('ru-Ru', {
+                                    year: 'numeric',
+                                    month: 'numeric',
+                                    day: 'numeric',
+                                    hour: 'numeric',
+                                    minute: 'numeric',
+                                    second: 'numeric'
+                                }).format(new Date(transaction.dateOfTransaction))}</h2></div>
+                            </div>
+                        ))}
+                    </div>
+            )}
+
+            
+            
+            {/* <Backdrop open={isLoading}>
+                <CircularProgress />
+            </Backdrop> */}
         </div>
     );
 };
