@@ -6,7 +6,10 @@ class Transaction extends Model {}
 Transaction.init({
     id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
     userID: { type: DataTypes.INTEGER, allowNull: false },
-    come: { type: DataTypes.STRING, allowNull: false },
+    come: {
+        type: DataTypes.STRING, allowNull: false, validate: {
+            isIn: [['Income', 'Outcome']] 
+        } },
     valueOfTransaction: DataTypes.DECIMAL(10, 2),
     typeOfTransaction: { type: DataTypes.STRING, allowNull: false },
     dateOfTransaction: { type: DataTypes.DATE, allowNull: false }

@@ -3,6 +3,8 @@ import './Transactions.css';
 import axios from 'axios';
 import {useNavigate} from 'react-router-dom';
 import {Backdrop, CircularProgress} from '@mui/material';
+import Box from '@mui/material/Box';
+import Skeleton from '@mui/material/Skeleton';
 
 import {Link} from "react-router-dom";
 //import Menu from "../Menu/Menu";
@@ -51,7 +53,7 @@ const MainPage = () => {
                     balance: response.balance,
                 });
 
-                /* const transactionsResponse = await fetch('http://localhost:5000/user/getTransactions', {
+                const transactionsResponse = await fetch('http://localhost:5000/user/getTransactions', {
                     method: 'POST',
                     headers: {
                         Authorization: `Bearer ${token}`,
@@ -61,7 +63,7 @@ const MainPage = () => {
                 });
 
                 const transactionsData = await transactionsResponse.json(); 
-                setTransactions(transactionsData);*/
+                setTransactions(transactionsData);
 
                 const typesOfTransaction = await fetch('http://localhost:5000/user/getTypesOfTransactions', {
                     method: 'POST',
@@ -90,9 +92,6 @@ const MainPage = () => {
                 await setTypesOfOutcomes(outcomes);
                 await setTypesOfIncomes(incomes);
 
-                console.log(typesOfOutcomes);
-                console.log(typesOfIncomes);
-
             } catch (error) {
                 console.error(error.message);
             }
@@ -101,6 +100,10 @@ const MainPage = () => {
         });
         fetchData();
     }, []);
+
+    function toggleAddTransaction() {
+        setAddTransactionIsOpened(!addTransactionIsOpened);
+    }
 
     return (
         <div className="Transactions">
@@ -115,23 +118,32 @@ const MainPage = () => {
                     </div>
                 </div>
             </header>
-            <div>
-                <h2>Типы расходов:</h2>
-                <ul>
-                    {typesOfOutcomes.map((outcome, index) => (
-                        <li key={index}>{outcome.name}</li>
-                    ))}
-                </ul>
+            <div className="MainContent">
+                <div className="firstRow">
+                    <button onClick={toggleAddTransaction}>Добавить транзакцию</button>    
+                </div>    
             </div>
+            {isLoading ? (
+                <div className="fullWidthSkeleton">
+                    <Box sx={{ display: 'flex', flexDirection: 'column', gap: '10px', padding: '20px' }}>
+                        <Skeleton variant="rounded" animation="wave" height={60} />
+                        <Skeleton variant="rounded" height={60} />
+                        <Skeleton variant="rounded" animation="wave" height={60} />
+                        <Skeleton variant="rounded" height={60} />
+                        <Skeleton variant="rounded" animation="wave" height={60} />
+                        <Skeleton variant="rounded" height={60} />
+                        <Skeleton variant="rounded" animation="wave" height={60} />
+                        <Skeleton variant="rounded" height={60} />
+                    </Box>
 
-            <div>
-                <h2>Типы доходов:</h2>
-                <ul>
-                    {typesOfIncomes.map((income, index) => (
-                        <li key={index}>{income.name}</li>
-                    ))}
-                </ul>
-            </div>
+                </div>
+            ) : (
+                null // отобразим транзакции
+            )}
+
+            {/* <Backdrop open={isLoading}>
+                <CircularProgress />
+            </Backdrop> */}
         </div>
     );
 };
