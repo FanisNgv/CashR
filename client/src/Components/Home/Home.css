@@ -14,7 +14,6 @@
     background-image: url("../../Public/CashR.jpg");
     width: 100%;
     height: 100vh;
-    overflow: scroll;
     background-position: center;
     background-size: cover;
 }

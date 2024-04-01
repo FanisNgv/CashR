@@ -8,7 +8,16 @@ const PrivateRoute = () => {
         return <Navigate to="/login" />;
     }
     else {
-        return <Outlet />;
+        const decodedToken = JSON.parse(atob(token.split('.')[1])); // Декодируем токен и получаем его содержимое
+        const currentTime = Date.now() / 1000; // Текущее время в секундах
+
+        if (decodedToken.exp && decodedToken.exp <= currentTime) {
+            // Если время истечения токена прошло, перенаправляем на страницу логина
+            return <Navigate to="/login" />;
+        } else {
+            // В противном случае, перенаправляем на защищенный маршрут
+            return <Outlet />;
+        }
     }
 };
 

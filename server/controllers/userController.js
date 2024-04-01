@@ -54,19 +54,32 @@ class UserController {
 
     async getTransactions(req, res) {
         try {
-            const { userID } = req.body;
+            const { userID, limit, page } = req.body;
 
             // Находим все транзакции пользователя
             const transactions = await Transaction.findAll({
                 where: { userID: userID }
             });
 
-            res.status(200).json(transactions); // отправляем клиенту все транзакции со статусом 200
+            transactions.sort((a, b) => {
+                // Сравниваем даты, используя метод getTime() для получения числового представления даты
+                return new Date(b.dataValues.dateOfTransaction).getTime() - new Date(a.dataValues.dateOfTransaction).getTime();
+            });
+
+            // Вычисляем индексы начала и конца для текущей страницы
+            const startIndex = (page - 1) * limit;
+            const endIndex = startIndex + limit;
+
+            // Используем startIndex и endIndex для определения порции возвращаемых транзакций
+            const results = transactions.slice(startIndex, endIndex);
+
+            res.status(200).json(results); // отправляем клиенту транзакции для текущей страницы со статусом 200
         } catch (error) {
             console.error(error);
             res.status(500).json({ message: 'Произошла ошибка при получении транзакций' });
         }
     }
+
     async getTypesOfTransactions(req, res) {
         try {
             const { userID } = req.body;

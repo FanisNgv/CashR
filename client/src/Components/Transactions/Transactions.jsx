@@ -28,11 +28,92 @@ const MainPage = () => {
     const [typesOfIncomes, setTypesOfIncomes] = useState([]);
     const [transactions, setTransactions] = useState([]);
     const [sortedTransactions, setSortedTransactions] = useState([]);
+    
+    const [currentPage, setCurrentPage] = useState(1);
+    const [fetching, setFetching] = useState(true);
 
 
+    useEffect(()=>{
+        const fetchData = (async () => {
+            setIsLoading(true)
+
+            const token = localStorage.getItem('token');
+            if (!token) {
+                console.error('Token not found in localStorage');
+                return;
+            }
+            try {
+                const { data: response } = await axios.get('http://localhost:5000/auth/user', {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                });
+
+                const transactionsResponse = await fetch('http://localhost:5000/user/getTransactions', {
+                    method: 'POST',
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ userID: response.id, limit: 10, page: currentPage }),
+                });
+
+                const transactionsData = await transactionsResponse.json();
+                setTransactions(prevTransactions => [...prevTransactions, ...transactionsData]);
+                await new Promise(r => setTimeout(r, 3000));
+
+            } catch (error) {
+                console.error(error.message);
+            }
+
+            setIsLoading(false);
+        })
+        fetchData()
+    }, [currentPage])
+
+    /* useEffect(() => {
+        const fetchData = (async () => {
+
+            setIsLoading(true);
+
+            if(fetching){
+                const token = localStorage.getItem('token');
+                if (!token) {
+                    console.error('Token not found in localStorage');
+                    return;
+                }
+                try {
+                    const { data: response } = await axios.get('http://localhost:5000/auth/user', {
+                        headers: {
+                            Authorization: `Bearer ${token}`,
+                        },
+                    });
+
+                    const transactionsResponse = await fetch('http://localhost:5000/user/getTransactions?limit=10', {
+                        method: 'POST',
+                        headers: {
+                            Authorization: `Bearer ${token}`,
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ userID: response.id, limit: 10 }),
+                    });
+
+                    const transactionsData = await transactionsResponse.json();
+                    setTransactions(transactionsData);
+
+                } catch (error) {
+                    console.error(error.message);
+                }
+                setIsLoading(false);
+
+            }
+        })
+        fetchData();
+    }, [fetching]) */
+
+    
 
     useEffect(() => {
-        setIsLoading(true);
         const fetchData = (async () => {
             const token = localStorage.getItem('token');
             if (!token) {
@@ -53,18 +134,6 @@ const MainPage = () => {
                     email: response.email,
                     balance: response.balance,
                 });
-
-                const transactionsResponse = await fetch('http://localhost:5000/user/getTransactions', {
-                    method: 'POST',
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                        'Content-Type': 'application/json'
-                    },                    
-                    body: JSON.stringify({userID: response.id}),
-                });
-
-                const transactionsData = await transactionsResponse.json(); 
-                setTransactions(transactionsData);
 
                 const typesOfTransaction = await fetch('http://localhost:5000/user/getTypesOfTransactions', {
                     method: 'POST',
@@ -106,6 +175,10 @@ const MainPage = () => {
         setAddTransactionIsOpened(!addTransactionIsOpened);
         setIsLoading(!isLoading);
     }
+    function toggleLoadTransactions(){
+        setCurrentPage(currentPage+1)
+
+    }
     function getDateValue(dateString) {
         return new Date(dateString).getTime();
     }
@@ -115,6 +188,8 @@ const MainPage = () => {
         });
         setSortedTransactions(srtdTransactions);
     }, [transactions])
+
+
 
     const [standartSet, setStandartSet] = useState([]);
     function getDateValue(dateString) {
@@ -126,6 +201,8 @@ const MainPage = () => {
         });
         setStandartSet(srtdTransactions);
     }, [transactions])
+
+
 
     return (
         <div className="Transactions">
@@ -153,17 +230,11 @@ const MainPage = () => {
             {isLoading ? (
                 <div className="fullWidthSkeleton">
                     <Box sx={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                        <Skeleton variant="rounded" animation="wave" height={37} />
-                        <Skeleton variant="rounded" height={37} />
-                        <Skeleton variant="rounded" animation="wave" height={37} />
-                        <Skeleton variant="rounded" height={37} />
-                        <Skeleton variant="rounded" animation="wave" height={37} />
-                        <Skeleton variant="rounded" height={37} />
-                        <Skeleton variant="rounded" animation="wave" height={37} />
-                        <Skeleton variant="rounded" height={37} />
-                        <Skeleton variant="rounded" animation="wave" height={37} />
-                        <Skeleton variant="rounded" height={37} />
-                        <Skeleton variant="rounded" animation="wave" height={37} />
+                        {transactions.map((index) => (
+                            <React.Fragment key={index}>
+                                <Skeleton variant="rounded" animation="wave" height={37} />
+                            </React.Fragment>
+                        ))}
                     </Box>
 
                 </div>
@@ -191,7 +262,9 @@ const MainPage = () => {
                         ))}
                     </div>
             )}
-
+            <div className="loadTransactions">
+                <button onClick={toggleLoadTransactions}>Загрузить еще</button>
+            </div> 
             
             
             {/* <Backdrop open={isLoading}>

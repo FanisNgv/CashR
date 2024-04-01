@@ -2,8 +2,6 @@
     padding: 0;
     margin: 0;
     box-sizing: border-box;
-    -ms-overflow-style: none;
-    scrollbar-width: none;
 }
 .BarText{
     font-family: 'Noto Sans', sans-serif;
