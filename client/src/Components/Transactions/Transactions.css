@@ -44,6 +44,11 @@
     flex-direction: row;
     gap: 5px;
 }
+.loadTransactions{
+    display: flex;
+    justify-content: center;
+    flex-direction: row;
+}
 button {
     cursor: pointer;
     font-size: 16px;
