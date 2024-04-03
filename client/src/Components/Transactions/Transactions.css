@@ -49,6 +49,12 @@
     justify-content: center;
     flex-direction: row;
 }
+.daySeparator {
+    margin-top: 20px;
+    font-family: 'Noto Sans', sans-serif;
+    font-size: 18px;
+    color: white;
+}
 button {
     cursor: pointer;
     font-size: 16px;

@@ -223,9 +223,8 @@ const MainPage = () => {
                 </div>    
             </div>
             <div className="transHeader">
-                <div><p>Сумма</p></div>
                 <div><p>Тип транзакции</p></div>
-                <div><p>Дата транзакции</p></div>
+                <div><p>Сумма</p></div>
             </div>
             {isLoading ? (
                 <div className="fullWidthSkeleton">
@@ -240,27 +239,48 @@ const MainPage = () => {
                 </div>
             ) : (
                     <div>
-                        {sortedTransactions && sortedTransactions.map((transaction) => (
-                            <div className="transRow" key={transaction._id}>
-                                <div className='comeContainer'>
-                                    <div className='comeOutcome'>
-                                        <h2>{transaction.come === 'Outcome' && '-' + transaction.valueOfTransaction}</h2></div>
-                                    <div className='comeIncome'>
-                                        <h2>{transaction.come === 'Income' && '+' + transaction.valueOfTransaction}</h2>
+                        {sortedTransactions && sortedTransactions.reduce((acc, transaction, index, array) => {
+                            // Format the date
+                            const transactionDate = new Date(transaction.dateOfTransaction);
+                            const formattedDate = new Intl.DateTimeFormat('ru-Ru', {
+                                year: 'numeric',
+                                month: 'numeric',
+                                day: 'numeric'
+                            }).format(transactionDate);
+
+                            // Check if it's a new day
+                            const prevTransaction = array[index - 1];
+                            const prevDate = prevTransaction ? new Date(prevTransaction.dateOfTransaction) : null;
+                            const isNewDay = !prevTransaction || transactionDate.toDateString() !== prevDate.toDateString();
+
+                            // Add an extra div for day separation and group the transactions by date
+                            if (isNewDay) {
+                                acc.push(
+                                    <div key={`separator_${formattedDate}`} className="daySeparator">
+                                        <div><h2>{formattedDate}</h2></div>
+                                    </div>
+                                );
+                            }
+
+                            // Add transaction row with onClick handler
+                            acc.push(
+                                <div className="transRow" key={transaction._id} onClick={() => console.log(transaction.id)}>
+                                    <div><h2>{transaction.typeOfTransaction}</h2></div>
+                                    <div className='comeContainer'>
+                                        <div className='comeOutcome'>
+                                            <h2>{transaction.come === 'Outcome' && '-' + transaction.valueOfTransaction}</h2>
+                                        </div>
+                                        <div className='comeIncome'>
+                                            <h2>{transaction.come === 'Income' && '+' + transaction.valueOfTransaction}</h2>
+                                        </div>
                                     </div>
                                 </div>
-                                <div><h2>{transaction.typeOfTransaction}</h2></div>
-                                <div><h2>{new Intl.DateTimeFormat('ru-Ru', {
-                                    year: 'numeric',
-                                    month: 'numeric',
-                                    day: 'numeric',
-                                    hour: 'numeric',
-                                    minute: 'numeric',
-                                    second: 'numeric'
-                                }).format(new Date(transaction.dateOfTransaction))}</h2></div>
-                            </div>
-                        ))}
+                            );
+
+                            return acc;
+                        }, [])}
                     </div>
+
             )}
             <div className="loadTransactions">
                 <button onClick={toggleLoadTransactions}>Загрузить еще</button>
