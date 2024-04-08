@@ -11,6 +11,7 @@ const Transaction = require('../models/transaction')
 const TypesOfTransactions = require('../models/typesOfTransactions')
 
 const { Op} = require('sequelize'); // Импортируем операторы для Sequelize
+const { transaction } = require('../db');
 
 class UserController {
 
@@ -18,6 +19,13 @@ class UserController {
         try {
             const { userID, come, valueOfTransaction, typeOfTransaction, dateOfTransaction } = req.body; // парсим тело http ответа по этим переменным
 
+            console.log(req.body)
+
+            // Находим пользователя и обновляем его баланс
+            const user = await User.findByPk(userID);
+            if (!user) {
+                throw new Error('Пользователь не найден');
+            }
             // Создаем новую транзакцию
             const newTransaction = await Transaction.create({
                 userID,
@@ -27,12 +35,6 @@ class UserController {
                 dateOfTransaction
             });
 
-            // Находим пользователя и обновляем его баланс
-            const user = await User.findByPk(userID);
-            if (!user) {
-                throw new Error('Пользователь не найден');
-            }
-
             let balance = user.balance;
 
             // Если это был доход, то прибавляем транзакцию
@@ -41,11 +43,12 @@ class UserController {
             } else if (come === 'Outcome') {
                 balance -= parseFloat(valueOfTransaction);
             }
+            const createdTransaction = await Transaction.findByPk(newTransaction.id);
 
             // Обновляем баланс пользователя
             await User.update({ balance }, { where: { id: userID } });
 
-            res.status(200).json({ message: 'Транзакция успешно создана!' });
+            res.status(200).json({ message: 'Транзакция успешно создана!', transaction: createdTransaction });
         } catch (error) {
             console.error(error);
             res.status(500).json({ message: 'Произошла ошибка при создании транзакции' });

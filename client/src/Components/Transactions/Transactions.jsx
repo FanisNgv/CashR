@@ -1,32 +1,23 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState, useContext} from 'react';
 import './Transactions.css';
 import axios from 'axios';
 import {useNavigate} from 'react-router-dom';
 import {Backdrop, CircularProgress} from '@mui/material';
 import Box from '@mui/material/Box';
 import Skeleton from '@mui/material/Skeleton';
-
-import {Link} from "react-router-dom";
-//import Menu from "../Menu/Menu";
-//import ModalAddTrans from "../Modal/ModalAddTrans";
-//import MyDatePickerRange from "../DatePicker/DatePickerRange";
-import {disableBodyScroll, enableBodyScroll} from "body-scroll-lock";
-//import ProfileMenu from "../Menu/ProfileMenu";
-//import ModalFilter from "../Modal/ModalFilter";
+import ModalAddTrans from "../Modals/ModalAddTrans";
+import { UserTransactionContext } from '../../Context'; // Импортируем контекст
 
 const MainPage = () => {
     const [isLoading, setIsLoading] = useState();
-    const [user, setUser] = useState({
-        lastname: "",
-        firstname: "",
-        email: ""
-    });
+
+    const { user, setUser, transactions, setTransactions } = useContext(UserTransactionContext); // Используем контекст
+
 
 
     const [addTransactionIsOpened, setAddTransactionIsOpened] = useState(false);
     const [typesOfOutcomes, setTypesOfOutcomes] = useState([]);
     const [typesOfIncomes, setTypesOfIncomes] = useState([]);
-    const [transactions, setTransactions] = useState([]);
     const [sortedTransactions, setSortedTransactions] = useState([]);
     
     const [currentPage, setCurrentPage] = useState(1);
@@ -71,48 +62,6 @@ const MainPage = () => {
         fetchData()
     }, [currentPage])
 
-    /* useEffect(() => {
-        const fetchData = (async () => {
-
-            setIsLoading(true);
-
-            if(fetching){
-                const token = localStorage.getItem('token');
-                if (!token) {
-                    console.error('Token not found in localStorage');
-                    return;
-                }
-                try {
-                    const { data: response } = await axios.get('http://localhost:5000/auth/user', {
-                        headers: {
-                            Authorization: `Bearer ${token}`,
-                        },
-                    });
-
-                    const transactionsResponse = await fetch('http://localhost:5000/user/getTransactions?limit=10', {
-                        method: 'POST',
-                        headers: {
-                            Authorization: `Bearer ${token}`,
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({ userID: response.id, limit: 10 }),
-                    });
-
-                    const transactionsData = await transactionsResponse.json();
-                    setTransactions(transactionsData);
-
-                } catch (error) {
-                    console.error(error.message);
-                }
-                setIsLoading(false);
-
-            }
-        })
-        fetchData();
-    }, [fetching]) */
-
-    
-
     useEffect(() => {
         const fetchData = (async () => {
             const token = localStorage.getItem('token');
@@ -149,7 +98,6 @@ const MainPage = () => {
                 const outcomes = [];
                 const incomes = [];
 
-                // Разделяем данные на массивы typesOfOutcomes и typesOfIncomes
                 typesOfTransactionsData.forEach(transaction => {
                     if (transaction.isIncome) {
                         incomes.push(transaction);
@@ -173,7 +121,7 @@ const MainPage = () => {
 
     function toggleAddTransaction() {
         setAddTransactionIsOpened(!addTransactionIsOpened);
-        setIsLoading(!isLoading);
+        console.log(addTransactionIsOpened);
     }
     function toggleLoadTransactions(){
         setCurrentPage(currentPage+1)
@@ -182,6 +130,7 @@ const MainPage = () => {
     function getDateValue(dateString) {
         return new Date(dateString).getTime();
     }
+    
     useEffect(() => {
         const srtdTransactions = [...transactions].sort(function (a, b) {
             return getDateValue(b.dateOfTransaction) - getDateValue(a.dateOfTransaction);
@@ -228,7 +177,7 @@ const MainPage = () => {
             </div>
             {isLoading ? (
                 <div className="fullWidthSkeleton">
-                    <Box sx={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                    <Box sx={{ display: 'flex', flexDirection: 'column', gap: '10px', width: '90%', margin: 'auto' }}>
                         {transactions.map((index) => (
                             <React.Fragment key={index}>
                                 <Skeleton variant="rounded" animation="wave" height={37} />
@@ -257,18 +206,18 @@ const MainPage = () => {
                             if (isNewDay) {
                                 acc.push(
                                     <div key={`separator_${formattedDate}`} className="daySeparator">
-                                        <div><h2>{formattedDate}</h2></div>
+                                        <div><h2>День транзакций: {formattedDate}</h2></div>
                                     </div>
                                 );
                             }
 
                             // Add transaction row with onClick handler
                             acc.push(
-                                <div className="transRow" key={transaction._id} onClick={() => console.log(transaction.id)}>
+                                <div className="transRow" key={transaction.id}>
                                     <div><h2>{transaction.typeOfTransaction}</h2></div>
                                     <div className='comeContainer'>
                                         <div className='comeOutcome'>
-                                            <h2>{transaction.come === 'Outcome' && '-' + transaction.valueOfTransaction}</h2>
+                                            <h2>{transaction.come === 'Outcome' && '' + transaction.valueOfTransaction}</h2>
                                         </div>
                                         <div className='comeIncome'>
                                             <h2>{transaction.come === 'Income' && '+' + transaction.valueOfTransaction}</h2>
@@ -282,14 +231,15 @@ const MainPage = () => {
                     </div>
 
             )}
+            <ModalAddTrans setIsLoading={setIsLoading} typesOfIncomes={typesOfIncomes}
+                typesOfOutcomes={typesOfOutcomes} setAddTransactionIsOpened={setAddTransactionIsOpened}
+                addTransactionIsOpened={addTransactionIsOpened} currentPage = {currentPage}/>
+
             <div className="loadTransactions">
                 <button onClick={toggleLoadTransactions}>Загрузить еще</button>
             </div> 
             
-            
-            {/* <Backdrop open={isLoading}>
-                <CircularProgress />
-            </Backdrop> */}
+                        
         </div>
     );
 };

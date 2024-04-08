@@ -50,6 +50,7 @@
     flex-direction: row;
 }
 .daySeparator {
+    margin-left: 80px;
     margin-top: 20px;
     font-family: 'Noto Sans', sans-serif;
     font-size: 18px;
@@ -93,6 +94,10 @@ button:active {
     border-radius: 10px;
     display: flex;
     justify-content: space-between;
+    width: 90%;
+    margin: auto;
+    padding-left: 20px;
+    padding-right: 20px;
 }
 .Transactions .transHeader {
     display: flex;
