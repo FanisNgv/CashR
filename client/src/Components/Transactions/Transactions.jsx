@@ -6,22 +6,20 @@ import {Backdrop, CircularProgress} from '@mui/material';
 import Box from '@mui/material/Box';
 import Skeleton from '@mui/material/Skeleton';
 import ModalAddTrans from "../Modals/ModalAddTrans";
+import ModalCurrentTrans from "../Modals/ModalCurrentTrans";
 import { UserTransactionContext } from '../../Context'; // Импортируем контекст
 
 const MainPage = () => {
     const [isLoading, setIsLoading] = useState();
-
     const { user, setUser, transactions, setTransactions } = useContext(UserTransactionContext); // Используем контекст
-
-
-
     const [addTransactionIsOpened, setAddTransactionIsOpened] = useState(false);
     const [typesOfOutcomes, setTypesOfOutcomes] = useState([]);
     const [typesOfIncomes, setTypesOfIncomes] = useState([]);
     const [sortedTransactions, setSortedTransactions] = useState([]);
-    
     const [currentPage, setCurrentPage] = useState(1);
-    const [fetching, setFetching] = useState(true);
+    const [currentTransModalIsOpened, setCurrentTransModalIsOpened] = useState(false);
+    const [currentTransaction, setCurrentTransaction] = useState({}); 
+    
 
 
     useEffect(()=>{
@@ -118,6 +116,10 @@ const MainPage = () => {
         fetchData();
     }, []);
 
+    function currentTransModal(transaction){
+        setCurrentTransModalIsOpened(!currentTransModalIsOpened);
+        setCurrentTransaction(transaction);
+    }
 
     function toggleAddTransaction() {
         setAddTransactionIsOpened(!addTransactionIsOpened);
@@ -189,7 +191,6 @@ const MainPage = () => {
             ) : (
                     <div>
                         {sortedTransactions && sortedTransactions.reduce((acc, transaction, index, array) => {
-                            // Format the date
                             const transactionDate = new Date(transaction.dateOfTransaction);
                             const formattedDate = new Intl.DateTimeFormat('ru-Ru', {
                                 year: 'numeric',
@@ -197,12 +198,10 @@ const MainPage = () => {
                                 day: 'numeric'
                             }).format(transactionDate);
 
-                            // Check if it's a new day
                             const prevTransaction = array[index - 1];
                             const prevDate = prevTransaction ? new Date(prevTransaction.dateOfTransaction) : null;
                             const isNewDay = !prevTransaction || transactionDate.toDateString() !== prevDate.toDateString();
 
-                            // Add an extra div for day separation and group the transactions by date
                             if (isNewDay) {
                                 acc.push(
                                     <div key={`separator_${formattedDate}`} className="daySeparator">
@@ -211,9 +210,8 @@ const MainPage = () => {
                                 );
                             }
 
-                            // Add transaction row with onClick handler
                             acc.push(
-                                <div className="transRow" key={transaction.id}>
+                                <div className="transRow" key={transaction.id} onClick={() => currentTransModal(transaction)}>
                                     <div><h2>{transaction.typeOfTransaction}</h2></div>
                                     <div className='comeContainer'>
                                         <div className='comeOutcome'>
@@ -226,6 +224,8 @@ const MainPage = () => {
                                 </div>
                             );
 
+                            
+
                             return acc;
                         }, [])}
                     </div>
@@ -234,6 +234,10 @@ const MainPage = () => {
             <ModalAddTrans setIsLoading={setIsLoading} typesOfIncomes={typesOfIncomes}
                 typesOfOutcomes={typesOfOutcomes} setAddTransactionIsOpened={setAddTransactionIsOpened}
                 addTransactionIsOpened={addTransactionIsOpened} currentPage = {currentPage}/>
+
+            <ModalCurrentTrans setIsLoading={setIsLoading} typesOfIncomes={typesOfIncomes}
+                typesOfOutcomes={typesOfOutcomes} setCurrentTransModalIsOpened={setCurrentTransModalIsOpened}
+                currentTransModalIsOpened={currentTransModalIsOpened} transaction={currentTransaction} />
 
             <div className="loadTransactions">
                 <button onClick={toggleLoadTransactions}>Загрузить еще</button>
