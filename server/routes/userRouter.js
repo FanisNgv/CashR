@@ -8,8 +8,8 @@ const authMiddleware = require("../middleware/authMiddleware")
 
 router.post('/createTransaction', authMiddleware, controller.createTransaction); // это подроут для /user. Т.е. будем иметь .../user/createTransaction
 router.post('/getTransactions', authMiddleware, controller.getTransactions);
-router.delete('/deleteTransaction/:transactionID', authMiddleware, controller.deleteTransaction);
-router.put('/updateTransaction/:transactionID', authMiddleware, controller.updateTransaction);
+router.put('/deleteTransaction', authMiddleware, controller.deleteTransaction);
+router.put('/updateTransaction', authMiddleware, controller.updateTransaction);
 router.post('/getTypesOfTransactions', authMiddleware, controller.getTypesOfTransactions);
 
 module.exports = router;

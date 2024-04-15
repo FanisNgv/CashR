@@ -12,6 +12,10 @@ module.exports = function (req, res, next) {
             return res.status(401).json({message: "Не авторизован"})
         }
         const decoded = jwt.verify(token, config.secret)
+        
+        if (decoded.exp <= Math.floor(Date.now() / 1000)) {
+            return res.status(401).json({ message: "Токен истек" });
+        }
         // req.body = decoded
         next()
     } catch (e) {
