@@ -13,7 +13,7 @@ const ModalCurrentTrans = ({ setCurrentTransModalIsOpened, transaction, setIsLoa
     const [typesOfComes, setTypesOfComes] = useState([]);
     const [selectedType, setSelectedType] = useState("");
     const [sumOfTrans, setSumOfTrans] = useState();
-    const [startDate, setStartDate] = useState(new Date());
+    const [startDate, setStartDate] = useState();
     const [come, setCome] = useState("");
 
 
@@ -21,6 +21,7 @@ const ModalCurrentTrans = ({ setCurrentTransModalIsOpened, transaction, setIsLoa
         setSelectedType(transaction.typeOfTransaction);
         setSumOfTrans(transaction.valueOfTransaction);
         setCome(transaction.come);
+        setStartDate(transaction.dateOfTransaction);
 
     }, [currentTransModalIsOpened])
     
@@ -35,9 +36,51 @@ const ModalCurrentTrans = ({ setCurrentTransModalIsOpened, transaction, setIsLoa
         }
     }, [come])
 
+    async function handleDeleteTransClick(){
 
+        setIsLoading(true);
+        const token = localStorage.getItem('token');
+        if (!token) {
+            console.error('Token not found in localStorage');
+            return;
+        }
+        const deletingTransaction = {
+            userID: user.id,
+            transactionID: transaction.id,
+            come: come,
+            valueOfTransaction: come === 'Outcome' ? -parseFloat(sumOfTrans) : parseFloat(sumOfTrans),
+            typeOfTransaction: selectedType.label,
+            dateOfTransaction: startDate,
+        };
 
-    async function handleCreateTransClick() {
+        try {
+            axios.put('http://localhost:5000/user/deleteTransaction', deletingTransaction, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`,
+                },
+            })
+                .then(res => {
+                    const deletedTransactionID = res.data.deletedTransactionID;
+                    
+                    setTransactions(prevTransactions =>
+                        prevTransactions.filter(transaction => transaction.id !== deletedTransactionID)
+                    );
+                })
+                .catch(error => {
+                    console.error('Произошла ошибка:', error);
+                });
+
+            setIsLoading(false);
+
+        } catch (error) {
+            console.error(error.message);
+            setIsLoading(false);
+            alert('Произошла ошибка при создании транзакции');
+        }
+    }
+
+    async function handleUpdateTransClick() {
         if (!come) {
             alert('Выберите, это доход или расход!');
             return;
@@ -52,8 +95,9 @@ const ModalCurrentTrans = ({ setCurrentTransModalIsOpened, transaction, setIsLoa
             return;
         }
 
-        const transaction = {
+        const updatingTransaction = {
             userID: user.id,
+            transactionID: transaction.id,
             come: come,
             valueOfTransaction: come === 'Outcome' ? -parseFloat(sumOfTrans) : parseFloat(sumOfTrans),
             typeOfTransaction: selectedType.label,
@@ -68,33 +112,24 @@ const ModalCurrentTrans = ({ setCurrentTransModalIsOpened, transaction, setIsLoa
         }
 
         try {
-            axios.post('http://localhost:5000/user/createTransaction', transaction, {
+            axios.put('http://localhost:5000/user/updateTransaction', updatingTransaction, {
                 headers: {
                     'Content-Type': 'application/json',
                     Authorization: `Bearer ${token}`,
                 },
             })
                 .then(res => {
-                    const newTransaction = res.data.transaction;
-                    setTransactions(prevTransactions => [...prevTransactions, newTransaction]);
+                    const updatedTransaction = res.data.transaction;
+                    setTransactions(prevTransactions =>
+                        prevTransactions.map(transaction =>
+                            transaction.id === updatedTransaction[0].id ? updatedTransaction : transaction
+                        )
+                    );
                 })
                 .catch(error => {
                     console.error('Произошла ошибка:', error);
                 });
 
-
-            const { data: response } = await axios.get('http://localhost:5000/auth/user', {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            });
-
-            setUser({
-                ...user,
-                balance: response.balance,
-            });
-
-            setStartDate(new Date());
             setIsLoading(false);
 
         } catch (error) {
@@ -141,15 +176,16 @@ const ModalCurrentTrans = ({ setCurrentTransModalIsOpened, transaction, setIsLoa
 
                 <h1>Введите сумму:</h1>
                 <div className="amountOfTrans">
-                    <input type="number" placeholder={"Введите сумму"} onChange={(e) => setSumOfTrans(e.target.value)} required />
+                    <input type="number" value={Math.abs(sumOfTrans)} placeholder={"Введите сумму"} onChange={(e) => setSumOfTrans(e.target.value)} required />
                 </div>
 
                 <h1>Введите дату:</h1>
                 <div className="dateOfTrans">
                     <MyDatePicker wrapperClassName="datePicker" startDate={startDate} setStartDate={setStartDate} />
                 </div>
-                <div className="addButton">
-                    <button onClick={handleCreateTransClick}>Создать</button>
+                <div className="buttonRow">
+                    <button onClick={handleUpdateTransClick}>Изменить</button>
+                    <button onClick={handleDeleteTransClick}>Удалить</button>
                 </div>
             </div>
         </div>

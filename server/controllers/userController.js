@@ -55,6 +55,35 @@ class UserController {
         }
     }
 
+    async updateTransaction(req, res) {
+        try {
+            const { userID, transactionID, come, valueOfTransaction, typeOfTransaction, dateOfTransaction } = req.body; // парсим тело http ответа по этим переменным
+            
+            console.log(req.body)
+
+            const user = await User.findByPk(userID);
+            if (!user) {
+                throw new Error('Пользователь не найден');
+            }
+            
+            const [numUpdatedRows, updatedTransaction] = await Transaction.update(
+                { come, valueOfTransaction, typeOfTransaction, dateOfTransaction },
+                { returning: true, where: { id: transactionID } } // Добавляем опцию returning: true для получения обновленной транзакции
+            );
+
+
+            if (numUpdatedRows === 0) {
+                throw new Error('Транзакция не найдена или не была обновлена');
+            }
+
+
+            res.status(200).json({ message: 'Транзакция успешно обновлена!', transaction: updatedTransaction });
+        } catch (error) {
+            console.error(error);
+            res.status(500).json({ message: 'Произошла ошибка при создании транзакции' });
+        }
+    }
+
     async getTransactions(req, res) {
         try {
             const { userID, limit, page } = req.body;
@@ -99,7 +128,8 @@ class UserController {
 
     async deleteTransaction(req, res) {
         try {
-            const transactionID = req.params.transactionID; // Получаем ID транзакции из URL параметра, т.е. значение ID получается из параметра маршрута
+            console.log(req)
+            const { userID, transactionID, come, valueOfTransaction, typeOfTransaction, dateOfTransaction } = req.body; // парсим тело http ответа по этим переменным
 
             // Удаляем транзакцию из базы данных
             const deletedTransaction = await Transaction.destroy({ where: { id: transactionID } });
@@ -108,14 +138,14 @@ class UserController {
                 return res.status(404).json({ message: 'Транзакция не найдена' });
             }
 
-            res.status(200).json({ message: 'Транзакция успешно удалена' });
+            res.status(200).json({ message: 'Транзакция успешно удалена', deletedTransactionID: transactionID });
         } catch (error) {
             console.error(error);
             res.status(500).json({ message: 'Произошла ошибка при удалении транзакции' });
         }
     }
 
-    async updateTransaction(req, res) {
+    /* async updateTransaction(req, res) {
         try {
             const transactionID = req.params.transactionID; // Получаем ID транзакции из URL параметра
 
@@ -137,7 +167,7 @@ class UserController {
             console.error(error);
             res.status(500).json({ message: 'Произошла ошибка при обновлении транзакции' });
         }
-    }
+    } */
 
 
 }

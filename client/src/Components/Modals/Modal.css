@@ -67,6 +67,11 @@
     transform: translateY(3px);
     transition-duration: 0.3s;
 }
+.modal__content .buttonRow{
+    display: flex;
+    flex-direction: row;
+    margin-top: 100px;
+}
 .modal__content input[type="text"]{
     width: 50%;
     margin:auto;
