@@ -8,8 +8,10 @@ import Skeleton from '@mui/material/Skeleton';
 import ModalAddTrans from "../Modals/ModalAddTrans";
 import ModalCurrentTrans from "../Modals/ModalCurrentTrans";
 import { UserTransactionContext } from '../../Context'; // Импортируем контекст
+import ModalFilter from '../Modals/ModalFilter';
 
 const MainPage = () => {
+
     const [isLoading, setIsLoading] = useState();
     const { user, setUser, transactions, setTransactions } = useContext(UserTransactionContext); // Используем контекст
     const [addTransactionIsOpened, setAddTransactionIsOpened] = useState(false);
@@ -18,6 +20,7 @@ const MainPage = () => {
     const [sortedTransactions, setSortedTransactions] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [currentTransModalIsOpened, setCurrentTransModalIsOpened] = useState(false);
+    const [modalFilterIsOpened, setModalFilterIsOpened] = useState(false);
     const [currentTransaction, setCurrentTransaction] = useState({}); 
     
 
@@ -123,7 +126,9 @@ const MainPage = () => {
 
     function toggleAddTransaction() {
         setAddTransactionIsOpened(!addTransactionIsOpened);
-        console.log(addTransactionIsOpened);
+    }
+    function toggleFilterTransactions(){
+        setModalFilterIsOpened(!modalFilterIsOpened);
     }
     function toggleLoadTransactions(){
         setCurrentPage(currentPage+1)
@@ -146,12 +151,13 @@ const MainPage = () => {
     function getDateValue(dateString) {
         return new Date(dateString).getTime();
     }
-    useEffect(() => {
+
+    /* useEffect(() => {
         const srtdTransactions = [...transactions].sort(function (a, b) {
             return getDateValue(b.dateOfTransaction) - getDateValue(a.dateOfTransaction);
         });
         setStandartSet(srtdTransactions);
-    }, [transactions])
+    }, [transactions]) */
 
 
 
@@ -170,8 +176,11 @@ const MainPage = () => {
             </header>
             <div className="MainContent">
                 <div className="firstRow">
-                    <button onClick={toggleAddTransaction}>Добавить транзакцию</button>    
-                </div>    
+                    <button onClick={toggleAddTransaction}>Добавить транзакцию</button>
+                    <button onClick={toggleFilterTransactions}>Фильтр</button>    
+    
+                </div>
+   
             </div>
             <div className="transHeader">
                 <div><p>Тип транзакции</p></div>
@@ -189,48 +198,48 @@ const MainPage = () => {
 
                 </div>
             ) : (
-                    <div>
-                        {sortedTransactions && sortedTransactions.reduce((acc, transaction, index, array) => {
-                            const transactionDate = new Date(transaction.dateOfTransaction);
-                            const formattedDate = new Intl.DateTimeFormat('ru-Ru', {
-                                year: 'numeric',
-                                month: 'numeric',
-                                day: 'numeric'
-                            }).format(transactionDate);
+                <div>
+                    {sortedTransactions && sortedTransactions.map((transaction, index, array) => {
+                        const transactionDate = new Date(transaction.dateOfTransaction);
+                        const formattedDate = new Intl.DateTimeFormat('ru-Ru', {
+                            year: 'numeric',
+                            month: 'numeric',
+                            day: 'numeric'
+                        }).format(transactionDate);
 
-                            const prevTransaction = array[index - 1];
-                            const prevDate = prevTransaction ? new Date(prevTransaction.dateOfTransaction) : null;
-                            const isNewDay = !prevTransaction || transactionDate.toDateString() !== prevDate.toDateString();
+                        const prevTransaction = array[index - 1];
+                        const prevDate = prevTransaction ? new Date(prevTransaction.dateOfTransaction) : null;
+                        const isNewDay = !prevTransaction || transactionDate.toDateString() !== prevDate.toDateString();
 
-                            if (isNewDay) {
-                                acc.push(
-                                    <div key={`separator_${formattedDate}`} className="daySeparator">
-                                        <div><h2>День транзакций: {formattedDate}</h2></div>
-                                    </div>
-                                );
-                            }
+                        const elements = [];
 
-                            acc.push(
-                                <div className="transRow" key={transaction.id} onClick={() => currentTransModal(transaction)}>
-                                    <div><h2>{transaction.typeOfTransaction}</h2></div>
-                                    <div className='comeContainer'>
-                                        <div className='comeOutcome'>
-                                            <h2>{transaction.come === 'Outcome' && '' + transaction.valueOfTransaction}</h2>
-                                        </div>
-                                        <div className='comeIncome'>
-                                            <h2>{transaction.come === 'Income' && '+' + transaction.valueOfTransaction}</h2>
-                                        </div>
-                                    </div>
+                        if (isNewDay) {
+                            elements.push(
+                                <div key={`separator_${formattedDate}`} className="daySeparator">
+                                    <div><h2>День транзакций: {formattedDate}</h2></div>
                                 </div>
                             );
+                        }
 
-                            
+                        elements.push(
+                            <div className="transRow" key={transaction.id} onClick={() => currentTransModal(transaction)}>
+                                <div><h2>{transaction.typeOfTransaction}</h2></div>
+                                <div className='comeContainer'>
+                                    <div className='comeOutcome'>
+                                        <h2>{transaction.come === 'Outcome' && '' + transaction.valueOfTransaction}</h2>
+                                    </div>
+                                    <div className='comeIncome'>
+                                        <h2>{transaction.come === 'Income' && '+' + transaction.valueOfTransaction}</h2>
+                                    </div>
+                                </div>
+                            </div>
+                        );
 
-                            return acc;
-                        }, [])}
-                    </div>
-
+                        return elements;
+                    })}
+                </div>
             )}
+            
             <ModalAddTrans setIsLoading={setIsLoading} typesOfIncomes={typesOfIncomes}
                 typesOfOutcomes={typesOfOutcomes} setAddTransactionIsOpened={setAddTransactionIsOpened}
                 addTransactionIsOpened={addTransactionIsOpened} currentPage = {currentPage}/>
@@ -238,6 +247,10 @@ const MainPage = () => {
             <ModalCurrentTrans setIsLoading={setIsLoading} typesOfIncomes={typesOfIncomes}
                 typesOfOutcomes={typesOfOutcomes} setCurrentTransModalIsOpened={setCurrentTransModalIsOpened}
                 currentTransModalIsOpened={currentTransModalIsOpened} transaction={currentTransaction} />
+
+            <ModalFilter  modalFilterIsOpened={modalFilterIsOpened} setModalFilterIsOpened={setModalFilterIsOpened}
+                setSortedTransactions={setSortedTransactions} typesOfOutcomes={typesOfOutcomes} typesOfIncomes={typesOfIncomes} />
+
 
             <div className="loadTransactions">
                 <button onClick={toggleLoadTransactions}>Загрузить еще</button>

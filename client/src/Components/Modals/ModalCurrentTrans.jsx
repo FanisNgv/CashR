@@ -71,6 +71,10 @@ const ModalCurrentTrans = ({ setCurrentTransModalIsOpened, transaction, setIsLoa
                     console.error('Произошла ошибка:', error);
                 });
 
+            setSelectedType("");
+            setStartDate(new Date());
+            setSumOfTrans();
+            setCurrentTransModalIsOpened(false);
             setIsLoading(false);
 
         } catch (error) {
@@ -120,16 +124,21 @@ const ModalCurrentTrans = ({ setCurrentTransModalIsOpened, transaction, setIsLoa
             })
                 .then(res => {
                     const updatedTransaction = res.data.transaction;
+                    console.log("Это обновленная транзакция "+ updatedTransaction)
                     setTransactions(prevTransactions =>
                         prevTransactions.map(transaction =>
-                            transaction.id === updatedTransaction[0].id ? updatedTransaction : transaction
+                            transaction.id === updatedTransaction[0].id ? updatedTransaction[0] : transaction
                         )
                     );
+                    console.log(transactions)
                 })
                 .catch(error => {
                     console.error('Произошла ошибка:', error);
                 });
-
+            setSelectedType("");
+            setStartDate(new Date());
+            setSumOfTrans();
+            setCurrentTransModalIsOpened(false);
             setIsLoading(false);
 
         } catch (error) {
@@ -153,7 +162,7 @@ const ModalCurrentTrans = ({ setCurrentTransModalIsOpened, transaction, setIsLoa
                             id="Income"
                             value="Income"
                             checked={come === 'Income'}
-                            onChange={(e) => setCome(e.target.value)}
+                            onChange={(e) => {setCome(e.target.value); setSelectedType("")}}
                         />
                         <label htmlFor="Income">Доход</label>
                     </div>
@@ -164,7 +173,7 @@ const ModalCurrentTrans = ({ setCurrentTransModalIsOpened, transaction, setIsLoa
                             id="Outcome"
                             value="Outcome"
                             checked={come === 'Outcome'}
-                            onChange={(e) => setCome(e.target.value)}
+                            onChange={(e) => { setCome(e.target.value); setSelectedType("") }}
                         />
                         <label htmlFor="Outcome">Расход</label>
                     </div>

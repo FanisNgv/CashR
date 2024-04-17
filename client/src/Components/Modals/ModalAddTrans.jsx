@@ -86,7 +86,10 @@ const ModalAddTrans = ({ setAddTransactionIsOpened, setIsLoading, addTransaction
                 balance: response.balance,
             });
 
+            setSelectedType("");
             setStartDate(new Date());
+            setSumOfTrans('');
+            setAddTransactionIsOpened(false);
             setIsLoading(false);
             
         } catch (error) {
@@ -109,7 +112,7 @@ const ModalAddTrans = ({ setAddTransactionIsOpened, setIsLoading, addTransaction
                             name="come"
                             id="Income"
                             value="Income"
-                            onChange={(e) => setCome(e.target.value)}
+                            onChange={(e) => { setCome(e.target.value); setSelectedType("") }}
                         />
                         <label htmlFor="Income">Доход</label>
                     </div>
@@ -119,7 +122,7 @@ const ModalAddTrans = ({ setAddTransactionIsOpened, setIsLoading, addTransaction
                             name="come"
                             id="Outcome"
                             value="Outcome"
-                            onChange={(e) => setCome(e.target.value)}
+                            onChange={(e) => { setCome(e.target.value); setSelectedType("")}}
                         />
                         <label htmlFor="Outcome">Расход</label>
                     </div>
@@ -131,7 +134,7 @@ const ModalAddTrans = ({ setAddTransactionIsOpened, setIsLoading, addTransaction
 
                 <h1>Введите сумму:</h1>
                 <div className="amountOfTrans">
-                    <input type="number" placeholder={"Введите сумму"} onChange={(e) => setSumOfTrans(e.target.value)} required />
+                    <input type="number" placeholder={"Введите сумму"} value={sumOfTrans} onChange={(e) => setSumOfTrans(e.target.value)} required />
                 </div>
 
                 <h1>Введите дату:</h1>

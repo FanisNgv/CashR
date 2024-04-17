@@ -98,6 +98,17 @@ button:active {
     margin: auto;
     padding-left: 20px;
     padding-right: 20px;
+    transition-duration: 0.5s;
+}
+.transRow:hover{
+    background-color: #3854F2;
+    cursor: pointer;
+}
+.transRow:active{
+    background-color: #3854F2;
+    box-shadow: 0 5px #3854F2;
+    transform: translateY(3px);
+    transition-duration: 0.3s;
 }
 .Transactions .transHeader {
     display: flex;
