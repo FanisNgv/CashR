@@ -10,8 +10,8 @@ const ModalFilter = ({ setModalFilterIsOpened, modalFilterIsOpened, setSortedTra
 
     const { user, setUser, transactions, setTransactions } = useContext(UserTransactionContext);
     const [selectedTypes, setSelectedTypes] = useState([]);
-    const [startDate, setStartDate] = useState(new Date("2023-01-01"));
-    const [endDate, setEndDate] = useState(new Date("2040-01-01"));
+    const [startDate, setStartDate] = useState(new Date("2024-01-01"));
+    const [endDate, setEndDate] = useState(new Date());
     const [multiSelectIsOpened, setMultiSelectIsOpened] = useState(false);
     const [typesOfComes, setTypesOfComes] = useState([]);
 
@@ -22,7 +22,8 @@ const ModalFilter = ({ setModalFilterIsOpened, modalFilterIsOpened, setSortedTra
         setTypesOfComes(typesOfIncomes.concat(typesOfOutcomes))
 
        }, [typesOfIncomes, typesOfOutcomes])
-    useEffect(() => {console.log(typesOfComes)}, typesOfComes)
+
+    useEffect(() => {console.log(typesOfComes)}, [typesOfComes])
 
     function filterByValue(transactions, leftBorder, rightBorder) {
         return transactions.filter((transaction) => {
@@ -85,7 +86,16 @@ const ModalFilter = ({ setModalFilterIsOpened, modalFilterIsOpened, setSortedTra
         setSortedTransactions(sortedTransactions);
     }
 
-
+    async function handleResetClick() {
+        setSelectedTypes([]);
+        setStartDate(new Date("2024-01-01"));
+        setEndDate(new Date());
+        setMultiSelectIsOpened(false);
+        setTypesOfComes([]);
+        setLeftBorder()
+        setRightBorder()
+        setSortedTransactions(transactions)
+    }
      
 
 
@@ -118,7 +128,7 @@ const ModalFilter = ({ setModalFilterIsOpened, modalFilterIsOpened, setSortedTra
             <div className="modal__content" onClick={e => e.stopPropagation()}>
                 <h1>Введите диапазон дат:</h1>
 
-                <div id="datePickerRange">
+                <div className="dateOfTrans">
                     <MyDatePickerRange startDate={startDate} setStartDate={setStartDate} endDate={endDate} setEndDate={setEndDate} className="hidden" />
                 </div>
 
@@ -131,8 +141,9 @@ const ModalFilter = ({ setModalFilterIsOpened, modalFilterIsOpened, setSortedTra
                     <input type="number" value={rightBorder} placeholder={"Введите правую границу"} onChange={(e) => { setRightBorder(e.target.value) }} required />
                 </div>
 
-                <div className="addButton">
+                <div className="buttonRow">
                     <button onClick={handleFilterClick}>Отфильтровать</button>
+                    <button onClick={handleResetClick}>Сброс</button>
                 </div>
             </div>
         </div>

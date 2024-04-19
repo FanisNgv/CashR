@@ -72,6 +72,13 @@
     flex-direction: row;
     margin-top: 100px;
 }
+
+.filterButton button {
+    margin-top: 5px;
+    width: 150px;
+    margin-left: 220px;
+}
+
 .modal__content input[type="text"]{
     width: 50%;
     margin:auto;
@@ -82,20 +89,22 @@
     justify-content: center;
 }
 .modal__content #datePickerRange button {
-    margin-top: 0;
-    margin-left: 0;
-    cursor: pointer;
-    padding: 0;
-    width: 20px;
-    height: 20px;
-    background-color: #202231;
+    align-items: center;
+    background: none;
+    display: flex;
+    justify-content: center;
     text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    border: 1px;
-    border-radius: 20px;
-    transition-duration: 0.5s;
+    cursor: pointer;
+    position: absolute;
+    top: 2px;
+    padding: 0;
+    border: none;
     z-index: 1;
+    height: 32px;
+    width: 32px;
+    text-indent: -999em;
+    overflow: hidden;
+    margin: 0;
 }
 
 .dateOfTrans button{
@@ -121,7 +130,6 @@
     margin-top: 100px;
     width: 150px;
     margin-left: 220px;
-    /* Устанавливаем расположение кнопки относительно правого края модального окна */
 }
 
 .come{

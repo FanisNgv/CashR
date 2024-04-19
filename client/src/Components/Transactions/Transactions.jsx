@@ -19,12 +19,13 @@ const MainPage = () => {
     const [typesOfIncomes, setTypesOfIncomes] = useState([]);
     const [sortedTransactions, setSortedTransactions] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
+    const [isAllLoaded, setIsAllLoaded] = useState(false);
     const [currentTransModalIsOpened, setCurrentTransModalIsOpened] = useState(false);
     const [modalFilterIsOpened, setModalFilterIsOpened] = useState(false);
     const [currentTransaction, setCurrentTransaction] = useState({}); 
     
 
-
+    // Если изменяется текущая страница, то обновляем данные
     useEffect(()=>{
         const fetchData = (async () => {
             setIsLoading(true)
@@ -51,7 +52,18 @@ const MainPage = () => {
                 });
 
                 const transactionsData = await transactionsResponse.json();
+
+                if (transactionsData.length < 10) {
+                    setIsAllLoaded(true);
+                }
+                else{
+                    setIsAllLoaded(false);
+                }
+
                 setTransactions(prevTransactions => [...prevTransactions, ...transactionsData]);
+
+                
+
                 await new Promise(r => setTimeout(r, 3000));
 
             } catch (error) {
@@ -63,6 +75,14 @@ const MainPage = () => {
         fetchData()
     }, [currentPage])
 
+    /* useEffect(() => {
+        if (transactions.length < 10) {
+            setIsAllLoaded(true);
+        } else {
+            setIsAllLoaded(false);
+        }
+    }, [transactions]); */
+    
     useEffect(() => {
         const fetchData = (async () => {
             const token = localStorage.getItem('token');
@@ -130,9 +150,14 @@ const MainPage = () => {
     function toggleFilterTransactions(){
         setModalFilterIsOpened(!modalFilterIsOpened);
     }
-    function toggleLoadTransactions(){
-        setCurrentPage(currentPage+1)
-
+    function toggleLoadTransactions() {
+        if (!isAllLoaded) {
+            setCurrentPage(currentPage + 1);
+            console.log(currentPage);
+        }
+        else{
+            alert('Все транзакции загружены');
+        }
     }
     function getDateValue(dateString) {
         return new Date(dateString).getTime();
@@ -145,14 +170,14 @@ const MainPage = () => {
         setSortedTransactions(srtdTransactions);
     }, [transactions])
 
-
-
-    const [standartSet, setStandartSet] = useState([]);
     function getDateValue(dateString) {
         return new Date(dateString).getTime();
     }
 
-    /* useEffect(() => {
+    /* 
+        const [standartSet, setStandartSet] = useState([]);
+
+    useEffect(() => {
         const srtdTransactions = [...transactions].sort(function (a, b) {
             return getDateValue(b.dateOfTransaction) - getDateValue(a.dateOfTransaction);
         });
