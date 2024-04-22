@@ -9,6 +9,8 @@ import ModalAddTrans from "../Modals/ModalAddTrans";
 import ModalCurrentTrans from "../Modals/ModalCurrentTrans";
 import { UserTransactionContext } from '../../Context'; // Импортируем контекст
 import ModalFilter from '../Modals/ModalFilter';
+import Menu from "../Menu/Menu";
+
 
 const MainPage = () => {
 
@@ -22,8 +24,16 @@ const MainPage = () => {
     const [isAllLoaded, setIsAllLoaded] = useState(false);
     const [currentTransModalIsOpened, setCurrentTransModalIsOpened] = useState(false);
     const [modalFilterIsOpened, setModalFilterIsOpened] = useState(false);
-    const [currentTransaction, setCurrentTransaction] = useState({}); 
-    
+    const [currentTransaction, setCurrentTransaction] = useState({});
+    const [menuActive, setMenuActive] = useState(false);
+    const navigate = useNavigate();
+
+
+    const MenuItems = [{ value: "Список транзакций", action: handleTransClick, icon: "trans" }, {
+        value: "Анализ транзакций",
+        action: handleTransAnalyseClick,
+        icon: "analyse"
+    }];
 
     // Если изменяется текущая страница, то обновляем данные
     useEffect(()=>{
@@ -143,7 +153,19 @@ const MainPage = () => {
         setCurrentTransModalIsOpened(!currentTransModalIsOpened);
         setCurrentTransaction(transaction);
     }
-
+    function toggleMenu() {
+        setMenuActive(!menuActive);
+    }
+    function handleTransAnalyseClick() {
+        navigate('/transAnalyse');
+    }
+    function handleTransClick() {
+        navigate('/transactions');
+    }
+    function handleLogoutClick() {
+        navigate('/login');
+        localStorage.clear();
+    }
     function toggleAddTransaction() {
         setAddTransactionIsOpened(!addTransactionIsOpened);
     }
@@ -190,7 +212,7 @@ const MainPage = () => {
         <div className="Transactions">
             <header>
                 <div className="MainBar">
-                    <h1 className="Logo">CashR</h1>
+                    <h1 className="Logo" onClick={toggleMenu}>CashR</h1>
                     <div className="userName">
                         <div className="userIcon">
                             <span className="material-symbols-outlined">person</span>
@@ -280,8 +302,17 @@ const MainPage = () => {
             <div className="loadTransactions">
                 <button onClick={toggleLoadTransactions}>Загрузить еще</button>
             </div> 
-            
-                        
+
+            <Menu active={menuActive} setActive={setMenuActive} action={true} header={"Главное меню"}
+                items={MenuItems} />
+
+            <br></br>
+
+            <footer>
+                <a href="https://vk.com/fanisngv" target="_blank"><i className="fa-brands fa-vk"></i></a>
+                <a href="https://t.me/FanisNgv" target="_blank"><i className="fa-brands fa-telegram"></i></a>
+                <a href="https://www.youtube.com/@fanisnigamadyanov8262/featured" target="_blank"><i className="fa-brands fa-youtube"></i></a>
+            </footer>
         </div>
     );
 };

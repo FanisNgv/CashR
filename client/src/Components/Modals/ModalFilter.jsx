@@ -91,7 +91,6 @@ const ModalFilter = ({ setModalFilterIsOpened, modalFilterIsOpened, setSortedTra
         setStartDate(new Date("2024-01-01"));
         setEndDate(new Date());
         setMultiSelectIsOpened(false);
-        setTypesOfComes([]);
         setLeftBorder()
         setRightBorder()
         setSortedTransactions(transactions)
@@ -141,7 +140,7 @@ const ModalFilter = ({ setModalFilterIsOpened, modalFilterIsOpened, setSortedTra
                     <input type="number" value={rightBorder} placeholder={"Введите правую границу"} onChange={(e) => { setRightBorder(e.target.value) }} required />
                 </div>
 
-                <div className="buttonRow">
+                <div className="buttonFilterRow">
                     <button onClick={handleFilterClick}>Отфильтровать</button>
                     <button onClick={handleResetClick}>Сброс</button>
                 </div>

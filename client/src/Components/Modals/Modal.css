@@ -10,6 +10,7 @@
     transform:scale(0);
     transition-duration: 0.2s;
 }
+
 #selectButOfDev{
     position: absolute;
     bottom: 80px;
@@ -21,6 +22,15 @@
     transform:scale(1);
     transition-duration: 0.4s;
 }
+
+.modal__filter{
+    padding: 0;
+    border-radius: 12px;
+    background-color: white;
+    height: 600px;
+    width: 600px;
+}
+
 .modal__content{
     padding: 0;
     border-radius: 12px;
@@ -72,11 +82,10 @@
     flex-direction: row;
     margin-top: 100px;
 }
-
-.filterButton button {
-    margin-top: 5px;
-    width: 150px;
-    margin-left: 220px;
+.modal__content .buttonFilterRow{
+    display: flex;
+    flex-direction: row;
+    margin-top: 10px;
 }
 
 .modal__content input[type="text"]{
@@ -124,8 +133,8 @@
     text-indent: -999em;
     overflow: hidden;
     margin: 0;
-    
 }
+
 .modal__content .addButton button {
     margin-top: 100px;
     width: 150px;
