@@ -10,5 +10,6 @@ router.post('/getTransactions', authMiddleware, controller.getTransactions);
 router.put('/deleteTransaction', authMiddleware, controller.deleteTransaction);
 router.put('/updateTransaction', authMiddleware, controller.updateTransaction);
 router.post('/getTypesOfTransactions', authMiddleware, controller.getTypesOfTransactions);
+router.post('/getAllTransactions', authMiddleware, controller.getAllTransactions);
 
 module.exports = router;

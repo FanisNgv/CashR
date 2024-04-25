@@ -19,8 +19,6 @@ class UserController {
         try {
             const { userID, come, valueOfTransaction, typeOfTransaction, dateOfTransaction } = req.body; // парсим тело http ответа по этим переменным
 
-            console.log(req.body)
-
             // Находим пользователя и обновляем его баланс
             const user = await User.findByPk(userID);
             if (!user) {
@@ -59,8 +57,6 @@ class UserController {
         try {
             const { userID, transactionID, come, valueOfTransaction, typeOfTransaction, dateOfTransaction } = req.body; // парсим тело http ответа по этим переменным
             
-            console.log(req.body)
-
             const user = await User.findByPk(userID);
             if (!user) {
                 throw new Error('Пользователь не найден');
@@ -81,6 +77,23 @@ class UserController {
         } catch (error) {
             console.error(error);
             res.status(500).json({ message: 'Произошла ошибка при создании транзакции' });
+        }
+    }
+    async getAllTransactions(req, res){
+        try {
+            const { userID} = req.body;
+
+            const transactions = await Transaction.findAll({
+                where: { userID: userID }
+            });
+
+            const plainTransactions = transactions.map(transaction => transaction.get({ plain: true }));
+            console.log(plainTransactions)
+            res.status(200).json(plainTransactions);
+
+        } catch (error) {
+            console.error(error);
+            res.status(500).json({ message: 'Произошла ошибка при получении транзакций' });
         }
     }
 
@@ -128,7 +141,6 @@ class UserController {
 
     async deleteTransaction(req, res) {
         try {
-            console.log(req)
             const { userID, transactionID, come, valueOfTransaction, typeOfTransaction, dateOfTransaction } = req.body; // парсим тело http ответа по этим переменным
 
             // Удаляем транзакцию из базы данных

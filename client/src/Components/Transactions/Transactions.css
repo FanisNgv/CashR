@@ -47,7 +47,6 @@ footer .fa-brands {
 }
 .userName h1{
     cursor: pointer;
-
 }
 .userName h1:hover{
     color: #d5d5d5;
@@ -134,6 +133,51 @@ button:active {
     transform: translateY(3px);
     transition-duration: 0.3s;
 }
+.filterRow .material-symbols-outlined {
+    cursor: pointer;
+
+}
+.filterRow h2 {
+    font-size: 25px;
+    color: white;
+    font-family: 'Noto Sans', sans-serif;
+}
+
+.filterRow .material-symbols-outlined:hover {
+    color: #d5d5d5;
+}
+.filterRow {
+    display: flex;
+    justify-content: space-between;
+    margin-left: 50px;
+}
+
+.resultRow {
+    display: flex;
+    justify-content: space-between;
+    border: 2px solid #EF233C;
+    border-radius: 10px;
+    margin-right: 75px;
+}
+
+.resultRow h2 {
+    font-size: 25px;
+    color: white;
+    font-family: 'Noto Sans', sans-serif;
+}
+
+.infoRow {
+    display: flex;
+    justify-content: space-between;
+}
+
+.infoRow h1 {
+    font-size: 20px;
+}
+
+
+
+
 .Transactions .transHeader {
     display: flex;
     justify-content: space-between;
@@ -154,4 +198,17 @@ button:active {
     font-size: 40px;
     margin-left: 10px;
     vertical-align: bottom;
+}
+.PieCharts {
+    margin-top: 50px;
+    display: flex;
+    justify-content: center;
+    gap: 200px;
+}
+
+.PieBars {
+    margin-top: 100px;
+    display: flex;
+    justify-content: center;
+    gap: 200px;
 }

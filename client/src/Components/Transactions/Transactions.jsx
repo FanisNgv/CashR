@@ -15,10 +15,9 @@ import Menu from "../Menu/Menu";
 const MainPage = () => {
 
     const [isLoading, setIsLoading] = useState();
-    const { user, setUser, transactions, setTransactions } = useContext(UserTransactionContext); // Используем контекст
+    const { user, setUser, transactions, setTransactions, typesOfIncomes, setTypesOfIncomes, typesOfOutcomes, setTypesOfOutcomes } = useContext(UserTransactionContext); // Используем контекст
     const [addTransactionIsOpened, setAddTransactionIsOpened] = useState(false);
-    const [typesOfOutcomes, setTypesOfOutcomes] = useState([]);
-    const [typesOfIncomes, setTypesOfIncomes] = useState([]);
+    
     const [sortedTransactions, setSortedTransactions] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [isAllLoaded, setIsAllLoaded] = useState(false);
@@ -35,7 +34,6 @@ const MainPage = () => {
         icon: "analyse"
     }];
 
-    // Если изменяется текущая страница, то обновляем данные
     useEffect(()=>{
         const fetchData = (async () => {
             setIsLoading(true)
