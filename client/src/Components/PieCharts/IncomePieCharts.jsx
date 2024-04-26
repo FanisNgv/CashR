@@ -38,7 +38,7 @@ const IncomePieChart = ({ filteredTransactions }) => {
         const maxValue = Math.max(...data.map((d) => d.y));
         const legendData = data.map((item) => ({
             name: item.x,
-            symbol: { fill: `rgb(0, ${Math.floor((item.y / maxValue) * 255)}, 0)` }
+            symbol: { fill: `rgb(0, ${Math.floor((item.y / maxValue) * 255 + 50)}, 0)` }
         }));
 
         return (

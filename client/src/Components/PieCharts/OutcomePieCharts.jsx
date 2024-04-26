@@ -38,7 +38,7 @@ const OutcomePieChart = ({ filteredTransactions }) => {
         const maxValue = Math.max(...data.map((d) => d.y));
         const legendData = data.map((item) => ({
             name: item.x,
-            symbol: { fill: `rgb(${Math.floor((item.y / maxValue) * 255)}, 0, 0)` }
+            symbol: { fill: `rgb(${Math.floor((item.y / maxValue) * 255 + 50)}, 0, 0)` }
         }));
 
         return (

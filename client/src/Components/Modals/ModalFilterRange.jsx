@@ -3,6 +3,8 @@ import './Modal.css'
 import axios from "axios";
 import MultiSelect from "../DropDown/DropDownMulti";
 import MyDatePickerRange from "../DatePicker/DatePickerRange";
+
+const Decimal = require('decimal.js');
 const ModalFilterRange = ({ setModalFilterIsOpened, expensesSum, incomesSum, setIncomeSum, total, setTotal, setExpensesSum, modalFilterIsOpened, transactions, filteredTransactions, setFilteredTransactions }) => {
 
     const [startDate, setStartDate] = useState();
@@ -14,7 +16,8 @@ const ModalFilterRange = ({ setModalFilterIsOpened, expensesSum, incomesSum, set
 
     setExpensesSum(expenses.reduce((total, amount) => total + amount, 0));
     setIncomeSum(incomes.reduce((total, amount) => total + amount, 0));
-    setTotal(expensesSum + incomesSum);
+    
+    setTotal((expensesSum + incomesSum).toFixed(2));
 
     useEffect(() => {
         // Например, если у вас есть массив транзакций
