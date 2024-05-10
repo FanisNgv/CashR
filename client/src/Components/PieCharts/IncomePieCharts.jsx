@@ -13,18 +13,20 @@ const IncomePieChart = ({ filteredTransactions }) => {
         return () => clearTimeout(timer);
     }, []);
 
-    const types = {};
+    // Фильтрация только доходных транзакций
+    const incomeTransactions = filteredTransactions.filter(
+        transaction => parseFloat(transaction.valueOfTransaction) > 0
+    );
 
-    if (filteredTransactions && filteredTransactions.length > 0) {
-        filteredTransactions.forEach((transaction) => {
-            if (parseFloat(transaction.valueOfTransaction) > 0) {
-                const type = transaction.typeOfTransaction;
-                const value = parseFloat(transaction.valueOfTransaction);
-                if (types[type]) {
-                    types[type] += value;
-                } else {
-                    types[type] = value;
-                }
+    if (incomeTransactions.length > 0) {
+        const types = {};
+        incomeTransactions.forEach((transaction) => {
+            const type = transaction.typeOfTransaction;
+            const value = parseFloat(transaction.valueOfTransaction);
+            if (types[type]) {
+                types[type] += value;
+            } else {
+                types[type] = value;
             }
         });
 
@@ -74,13 +76,18 @@ const IncomePieChart = ({ filteredTransactions }) => {
                             }}
                         />
                     </div>
-                    
                 </CSSTransition>
             </div>
         );
     } else {
-        return null;
+        return (
+            <div>
+                <h1>Диаграмма доходов:</h1>
+                <h1>Нет данных</h1>
+            </div>
+        );
     }
 };
+
 
 export default IncomePieChart;

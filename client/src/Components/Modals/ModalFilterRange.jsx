@@ -20,7 +20,6 @@ const ModalFilterRange = ({ setModalFilterIsOpened, expensesSum, incomesSum, set
     setTotal((expensesSum + incomesSum).toFixed(2));
 
     useEffect(() => {
-        // Например, если у вас есть массив транзакций
         if (transactions.length > 0) {
             const sortedTransactions = transactions.sort((a, b) => new Date(a.dateOfTransaction) - new Date(b.dateOfTransaction));
             const firstTransactionDate = new Date(sortedTransactions[0].dateOfTransaction);

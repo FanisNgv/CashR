@@ -31,6 +31,7 @@ const start = async ()=>{
         await sequelize.authenticate() // подключение к бд
         await sequelize.sync() // Сверка состояния БД со схемой
         app.listen(PORT, () => console.log(`Server started on port ${PORT}`))
+        
     } catch (e){
         console.log(e)
     }

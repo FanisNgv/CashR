@@ -16,6 +16,8 @@ const Menu = ({ header, items, active, setActive, action }) => {
                                 {item.icon === "logout" && <span className="material-symbols-outlined">logout</span>}
                                 {item.icon === "trans" && <span className="material-symbols-outlined">currency_exchange</span>}
                                 {item.icon === "analyse" && <span className="material-symbols-outlined">leaderboard</span>}
+                                {item.icon === "predict" && <span class="material-symbols-outlined">monitoring</span>}
+
                             </li>
                         )}
                     </ul>

@@ -32,6 +32,11 @@ const MainPage = () => {
         value: "Анализ транзакций",
         action: handleTransAnalyseClick,
         icon: "analyse"
+    },{
+        value: "Прогнозирование",
+        action: handlePredictClick,
+        icon: "predict"
+    
     }];
 
     useEffect(()=>{
@@ -143,6 +148,7 @@ const MainPage = () => {
                 console.error(error.message);
             }
             setIsLoading(false);
+            
         });
         fetchData();
     }, []);
@@ -153,6 +159,9 @@ const MainPage = () => {
     }
     function toggleMenu() {
         setMenuActive(!menuActive);
+    }
+    function handlePredictClick() {
+        navigate('/predict');
     }
     function handleTransAnalyseClick() {
         navigate('/transAnalyse');

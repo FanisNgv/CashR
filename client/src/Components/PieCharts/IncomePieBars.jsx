@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import {VictoryBar, VictoryPie} from "victory";
+import { VictoryBar } from "victory";
 import { CSSTransition } from "react-transition-group";
 import "../Transactions/Transactions.css";
 
@@ -34,10 +34,10 @@ const IncomePieBar = ({ filteredTransactions }) => {
             label: `${type}`,
         }));
 
-        return (
-            <div>
-                <h1>Столбцы доходов:</h1>
-                {data.length > 0 ? (
+        if (data.length > 0) {
+            return (
+                <div>
+                    <h1>Столбцы доходов:</h1>
                     <CSSTransition
                         in={showChart}
                         timeout={500}
@@ -57,18 +57,21 @@ const IncomePieBar = ({ filteredTransactions }) => {
                                         return `rgb(0, ${greenValue}, 0)`;
                                     },
                                 },
-
                             }}
                             animate={{ duration: 1000 }}
-                            
                         />
                     </CSSTransition>
-                ) : null}
-            </div>
-        );
-    } else {
-        return null;
+                </div>
+            );
+        }
     }
+
+    return (
+        <div>
+            <h1>Столбцы доходов:</h1>
+            <h1>Нет данных</h1>
+        </div>
+    );
 };
 
 export default IncomePieBar;

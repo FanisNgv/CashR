@@ -19,13 +19,13 @@ import OutcomePieBar from "../PieCharts/OutcomePieBars";
 import { UserTransactionContext } from '../../Context'; // Импортируем контекст
 
 
-const TransAnalyse = () => {
+const Predict = () => {
     const { user, setUser, typesOfIncomes, setTypesOfIncomes, typesOfOutcomes, setTypesOfOutcomes } = useContext(UserTransactionContext);
     const [isLoading, setIsLoading] = useState();
     const [menuActive, setMenuActive] = useState(false);
     const [profileActive, setProfileActive] = useState(false);
     const [modalFilterIsOpened, setModalFilterIsOpened] = useState(false);
-    const[allTransactions, setAllTransactions] = useState([]);
+    const [allTransactions, setAllTransactions] = useState([]);
     const [expensesSum, setExpensesSum] = useState();
     const [incomesSum, setIncomeSum] = useState();
     const [total, setTotal] = useState();
@@ -48,7 +48,7 @@ const TransAnalyse = () => {
 
     const ProfileItems = [{ value: "Выйти", action: handleLogoutClick, icon: "logout" }]
 
-    function handlePredictClick(){
+    function handlePredictClick() {
         navigate('/predict');
     }
     function handleTransAnalyseClick() {
@@ -61,7 +61,7 @@ const TransAnalyse = () => {
         navigate('/login');
         localStorage.clear();
     }
-
+    
     useEffect(() => {
         setIsLoading(true);
         const fetchData = (async () => {
@@ -84,8 +84,8 @@ const TransAnalyse = () => {
                     email: response.email,
                     balance: response.balance,
                 });
-            
-                
+
+
 
                 const transactionsResponse = await fetch('http://localhost:5000/user/getAllTransactions', {
                     method: 'POST',
@@ -93,13 +93,14 @@ const TransAnalyse = () => {
                         Authorization: `Bearer ${token}`,
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({ userID: response.id}),
+                    body: JSON.stringify({ userID: response.id }),
                 });
-
+                
                 const transactionsData = await transactionsResponse.json();
                 setAllTransactions(transactionsData);
                 setFilteredTransactions(transactionsData);
 
+                
 
             } catch (error) {
                 console.error(error.message);
@@ -117,6 +118,20 @@ const TransAnalyse = () => {
     }
     function toggleModalFilter() {
         setModalFilterIsOpened(!modalFilterIsOpened);
+    }
+    async function togglePredictTransactions() {
+        try {
+            const ML_Response = await fetch('http://127.0.0.1:8080/predict', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json' // Добавление заголовка Content-Type
+                },
+                body: JSON.stringify({ transactions: allTransactions }),
+            });
+
+        } catch (error) {
+            console.error(error.message);
+        }
     }
 
     const [standartSet, setStandartSet] = useState([]);
@@ -140,34 +155,9 @@ const TransAnalyse = () => {
                 </div>
             </header>
 
-
-            <div className="mainContent">
-                <div className="filterRow">
-                    <h2>Баланс:</h2>
-                    <h2>Общий оборот за период:</h2>
-                    <h2>Общий расход за период:</h2>
-                    <h2>Общий доход за период:</h2>
-                    <span onClick={toggleModalFilter} className="material-symbols-outlined">filter_list</span>
-                </div>
-                <div className="resultRow">
-                    <h2>{user.balance}р.</h2>
-                    <h2>{total}</h2>
-                    <h2>{expensesSum}</h2>
-                    <h2>{incomesSum}</h2>
-                </div>
-
+            <div className="firstRow">
+                <button onClick={togglePredictTransactions}>Спрогнозировать расходы</button>
             </div>
-            <div className="PieCharts">
-                <IncomePieChart filteredTransactions={filteredTransactions} />
-                <OutcomePieChart filteredTransactions={filteredTransactions} />
-            </div>
-
-            <div className="PieBars">
-                <IncomePieBar filteredTransactions={filteredTransactions} />
-                <OutcomePieBar filteredTransactions={filteredTransactions} />
-            </div>
-
-            <ModalFilterRange expensesSum={expensesSum} setExpensesSum={setExpensesSum} filteredTransactions={filteredTransactions} setFilteredTransactions={setFilteredTransactions} incomesSum={incomesSum} setIncomeSum={setIncomeSum} total={total} setTotal={setTotal} modalFilterIsOpened={modalFilterIsOpened} setModalFilterIsOpened={setModalFilterIsOpened} transactions={allTransactions}/>
 
             <Menu active={menuActive} setActive={setMenuActive} action={true} header={"Главное меню"}
                 items={MenuItems} />
@@ -185,4 +175,4 @@ const TransAnalyse = () => {
         </div>
     );
 }
-export default TransAnalyse;
+export default Predict;

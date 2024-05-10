@@ -13,31 +13,31 @@ const OutcomePieBar = ({ filteredTransactions }) => {
         return () => clearTimeout(timer);
     }, []);
 
-    const types = {};
+    const outcomeTypes = {};
 
     if (filteredTransactions && filteredTransactions.length > 0) {
         filteredTransactions.forEach((transaction) => {
             if (parseFloat(transaction.valueOfTransaction) < 0) {
                 const type = transaction.typeOfTransaction;
                 const value = parseFloat(transaction.valueOfTransaction);
-                if (types[type]) {
-                    types[type] += value;
+                if (outcomeTypes[type]) {
+                    outcomeTypes[type] += value;
                 } else {
-                    types[type] = value;
+                    outcomeTypes[type] = value;
                 }
             }
         });
 
-        const data = Object.keys(types).map((type) => ({
+        const data = Object.keys(outcomeTypes).map((type) => ({
             x: type,
-            y: -types[type],
+            y: -outcomeTypes[type],
             label: `${type}`,
         }));
 
-        return (
-            <div>
-                <h1>Столбцы расходов:</h1>
-                {data.length > 0 ? (
+        if (data.length > 0) {
+            return (
+                <div>
+                    <h1>Столбцы расходов:</h1>
                     <CSSTransition
                         in={showChart}
                         timeout={500}
@@ -61,12 +61,17 @@ const OutcomePieBar = ({ filteredTransactions }) => {
                             animate={{ duration: 1000 }}
                         />
                     </CSSTransition>
-                ) : null}
-            </div>
-        );
-    } else {
-        return null;
+                </div>
+            );
+        }
     }
+
+    return (
+        <div>
+            <h1>Столбцы расходов:</h1>
+            <h1>Нет данных</h1>
+        </div>
+    );
 };
 
 export default OutcomePieBar;

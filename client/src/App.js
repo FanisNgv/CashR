@@ -7,6 +7,7 @@ import PTransactions from "./Pages/transactions"
 import PrivateRoute from "./Components/PrivateRoute/PrivateRoute";
 import PTransAnalyse from './Components/Transactions/TransAnalyse';
 import {UserTransactionProvider} from './Context';
+import PPredict from "./Components/Transactions/Predict";
 
 
 
@@ -26,8 +27,12 @@ function App() {
                     <Route exact path='/transactions' element={<PTransactions />} />
                 </Route>
 
-                    <Route exct path='/transAnalyse' element={<PrivateRoute />}>
+                <Route exct path='/transAnalyse' element={<PrivateRoute />}>
                     <Route exact path='/transAnalyse' element={<PTransAnalyse />} />
+                </Route>
+
+                <Route exct path='/predict' element={<PrivateRoute />}>
+                    <Route exact path='/predict' element={<PPredict />} />
                 </Route>
 
             </Routes>

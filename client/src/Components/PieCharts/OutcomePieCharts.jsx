@@ -13,18 +13,19 @@ const OutcomePieChart = ({ filteredTransactions }) => {
         return () => clearTimeout(timer);
     }, []);
 
-    const types = {};
+    const outcomeTransactions = filteredTransactions.filter(
+        transaction => parseFloat(transaction.valueOfTransaction) < 0
+    );
 
-    if (filteredTransactions && filteredTransactions.length > 0) {
-        filteredTransactions.forEach((transaction) => {
-            if (parseFloat(transaction.valueOfTransaction) < 0) {
-                const type = transaction.typeOfTransaction;
-                const value = parseFloat(transaction.valueOfTransaction);
-                if (types[type]) {
-                    types[type] += value;
-                } else {
-                    types[type] = value;
-                }
+    if (outcomeTransactions.length > 0) {
+        const types = {};
+        outcomeTransactions.forEach((transaction) => {
+            const type = transaction.typeOfTransaction;
+            const value = parseFloat(transaction.valueOfTransaction);
+            if (types[type]) {
+                types[type] += value;
+            } else {
+                types[type] = value;
             }
         });
 
@@ -78,7 +79,12 @@ const OutcomePieChart = ({ filteredTransactions }) => {
             </div>
         );
     } else {
-        return null;
+        return (
+            <div>
+                <h1>Диаграмма расходов:</h1>
+                <h1>Нет данных</h1>
+            </div>
+        );
     }
 };
 
