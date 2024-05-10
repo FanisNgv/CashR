@@ -176,7 +176,15 @@ button:active {
 }
 
 
+.graphContainer {
+    margin-left: 50px;
+    display: flex;
+    justify-content: space-between;
+}
 
+.graph {
+    width: 45%;
+}
 
 .Transactions .transHeader {
     display: flex;

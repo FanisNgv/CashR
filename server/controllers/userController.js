@@ -1,16 +1,17 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const {validationResult} = require('express-validator');
-const {secret} = require("../config");
+const { validationResult } = require('express-validator');
+const { secret } = require("../config");
 const express = require("express");
 const path = require("path")
 const bodyParser = require('body-parser');
+const axios = require('axios');
 
 const User = require('../models/user');
 const Transaction = require('../models/transaction')
 const TypesOfTransactions = require('../models/typesOfTransactions')
 
-const { Op} = require('sequelize'); // Импортируем операторы для Sequelize
+const { Op } = require('sequelize'); // Импортируем операторы для Sequelize
 const { transaction } = require('../db');
 
 class UserController {
@@ -56,12 +57,12 @@ class UserController {
     async updateTransaction(req, res) {
         try {
             const { userID, transactionID, come, valueOfTransaction, typeOfTransaction, dateOfTransaction } = req.body; // парсим тело http ответа по этим переменным
-            
+
             const user = await User.findByPk(userID);
             if (!user) {
                 throw new Error('Пользователь не найден');
             }
-            
+
             const [numUpdatedRows, updatedTransaction] = await Transaction.update(
                 { come, valueOfTransaction, typeOfTransaction, dateOfTransaction },
                 { returning: true, where: { id: transactionID } } // Добавляем опцию returning: true для получения обновленной транзакции
@@ -79,9 +80,9 @@ class UserController {
             res.status(500).json({ message: 'Произошла ошибка при создании транзакции' });
         }
     }
-    async getAllTransactions(req, res){
+    async getAllTransactions(req, res) {
         try {
-            const { userID} = req.body;
+            const { userID } = req.body;
 
             const transactions = await Transaction.findAll({
                 where: { userID: userID }
@@ -135,7 +136,7 @@ class UserController {
             res.status(200).json(typesOfTransactions); // отправляем клиенту все транзакции со статусом 200
         } catch (error) {
             console.error(error);
-            res.status(500).json({ message: 'Произошла ошибка при получении типа транзакций'});
+            res.status(500).json({ message: 'Произошла ошибка при получении типа транзакций' });
         }
     }
 
@@ -156,7 +157,26 @@ class UserController {
             res.status(500).json({ message: 'Произошла ошибка при удалении транзакции' });
         }
     }
+    async sendDataToAPI() {
+        try {
+            // Данные для отправки
+            const data = {
+                user_input: 0.5 // Пример данных
+            };
 
+            // URL вашего Flask API
+            const url = 'http://127.0.0.1:8080/predict';
+
+            // Отправка POST-запроса на API
+            const response = await axios.post(url, data);
+
+            // Вывод ответа от сервера
+            console.log(response.data);
+        } catch (error) {
+            console.error('Ошибка:', error);
+        }
+    }
+    
     /* async updateTransaction(req, res) {
         try {
             const transactionID = req.params.transactionID; // Получаем ID транзакции из URL параметра

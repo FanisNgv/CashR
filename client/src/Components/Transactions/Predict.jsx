@@ -3,6 +3,7 @@ import './Transactions.css';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { Backdrop, CircularProgress } from '@mui/material';
+import { VictoryChart, VictoryLine, VictoryScatter, VictoryZoomContainer, VictoryTheme, VictoryAxis } from 'victory';
 
 import { Link } from "react-router-dom";
 import Menu from "../Menu/Menu";
@@ -17,7 +18,6 @@ import IncomePieBar from "../PieCharts/IncomePieBars";
 import OutcomePieBar from "../PieCharts/OutcomePieBars";
 
 import { UserTransactionContext } from '../../Context'; // Импортируем контекст
-
 
 const Predict = () => {
     const { user, setUser, typesOfIncomes, setTypesOfIncomes, typesOfOutcomes, setTypesOfOutcomes } = useContext(UserTransactionContext);
@@ -34,6 +34,8 @@ const Predict = () => {
     const [endDate, setEndDate] = useState(null);
     const [sortedTransactions, setSortedTransactions] = useState([]);
     const [filteredTransactions, setFilteredTransactions] = useState([]);
+    const [monthlyTransactions, setMonthlyTransactions] = useState([]); // Объявление monthlyTransactions здесь
+
 
     const MenuItems = [{ value: "Список транзакций", action: handleTransClick, icon: "trans" }, {
         value: "Анализ транзакций",
@@ -47,6 +49,46 @@ const Predict = () => {
     }];
 
     const ProfileItems = [{ value: "Выйти", action: handleLogoutClick, icon: "logout" }]
+
+    function formatDate(date) {
+        let d = new Date(date),
+            month = '' + (d.getMonth() + 1),
+            day = '' + d.getDate(),
+            year = d.getFullYear();
+
+        if (month.length < 2)
+            month = '0' + month;
+        if (day.length < 2)
+            day = '0' + day;
+
+        return [year, month].join('-');
+    }
+
+    function groupTransactionsByMonth(transactions) {
+        let grouped = {};
+
+        transactions.forEach(transaction => {
+            let month = formatDate(transaction.dateOfTransaction);
+            if (!grouped[month]) {
+                grouped[month] = { date: month, income: 0, outcome: 0 };
+            }
+            if (transaction.come === 'Income') {
+                grouped[month].income += parseFloat(transaction.valueOfTransaction);
+            } else if (transaction.come === 'Outcome') {
+                grouped[month].outcome -= parseFloat(transaction.valueOfTransaction);
+            }
+        });
+
+        // Преобразуем объект в массив значений
+        return Object.values(grouped);
+    }
+
+    function separateTransactionsByType(transactions) {
+        const income = transactions.filter(t => t.come === 'Income');
+        const outcome = transactions.filter(t => t.come === 'Outcome');
+
+        return { income, outcome };
+    }
 
     function handlePredictClick() {
         navigate('/predict');
@@ -85,8 +127,6 @@ const Predict = () => {
                     balance: response.balance,
                 });
 
-
-
                 const transactionsResponse = await fetch('http://localhost:5000/user/getAllTransactions', {
                     method: 'POST',
                     headers: {
@@ -99,8 +139,8 @@ const Predict = () => {
                 const transactionsData = await transactionsResponse.json();
                 setAllTransactions(transactionsData);
                 setFilteredTransactions(transactionsData);
+                setMonthlyTransactions(groupTransactionsByMonth(transactionsData)); 
 
-                
 
             } catch (error) {
                 console.error(error.message);
@@ -128,18 +168,36 @@ const Predict = () => {
                 },
                 body: JSON.stringify({ transactions: allTransactions }),
             });
+            // Проверяем, что запрос прошел успешно
+           // Преобразуем тело ответа в объект JSON
+        const data = await ML_Response.json();
+
+        // Извлекаем предсказанные значения из объекта data
+        const income_predicted_value = data.income_predicted_value;
+        const expense_predicted_value = data.expense_predicted_value;
+
+        // Добавляем предсказанные значения для следующего месяца к monthlyTransactions
+        const nextMonthDate = new Date(monthlyTransactions[monthlyTransactions.length - 1].date);
+        nextMonthDate.setMonth(nextMonthDate.getMonth() + 1);
+        const nextMonth = formatDate(nextMonthDate);
+        const predictedMonthData = { date: nextMonth, income: income_predicted_value, outcome: expense_predicted_value };
+        setMonthlyTransactions([...monthlyTransactions, predictedMonthData]);
 
         } catch (error) {
             console.error(error.message);
         }
     }
+    
 
     const [standartSet, setStandartSet] = useState([]);
+    monthlyTransactions.sort((a, b) => new Date(a.date) - new Date(b.date));
+
+    const { income, outcome } = separateTransactionsByType(allTransactions);
+    const monthNames = ["Янв", "Фев", "Мар", "Апр", "Май", "Июн", "Июл", "Авг", "Сен", "Окт", "Ноя", "Дек"];
 
     function getDateValue(dateString) {
         return new Date(dateString).getTime();
     }
-
 
     return (
         <div className="Transactions">
@@ -159,20 +217,106 @@ const Predict = () => {
                 <button onClick={togglePredictTransactions}>Спрогнозировать расходы</button>
             </div>
 
-            <Menu active={menuActive} setActive={setMenuActive} action={true} header={"Главное меню"}
-                items={MenuItems} />
+            <Menu active={menuActive} setActive={setMenuActive} action={true} header={"Главное меню"} items={MenuItems} />
             <ProfileMenu items={ProfileItems} userBalance={user.balance} userEmail={user.email} active={profileActive} setActive={setProfileActive} action={true} header={"Профиль"} />
             <Backdrop open={isLoading}>
                 <CircularProgress />
             </Backdrop>
 
-            <div id="addGap"></div>
+            {/* Графики доходов и расходов */}
+            <div className="graphContainer">
+                <div className="graph">
+                    <h2 style={{ fontSize: "24px", fontFamily: 'Noto Sans', color: 'white' }}>Доходы</h2>
+                    <VictoryChart
+                        theme={VictoryTheme.material}
+                        width={350}
+                        height={200}
+                        containerComponent={<VictoryZoomContainer />}
+                        domainPadding={{ x: [20, 20], y: [20, 20] }} // Добавление отступов по осям x и y
+
+                    >
+                        <VictoryAxis
+                            style={{
+                                grid: { stroke: "white", strokeWidth: 0.5 }, // Стили сетки
+                                tickLabels: { fontSize: 8, fill: "white", fontFamily: 'Noto Sans' },
+                                axis: { stroke: "white", strokeWidth: 1 }, // Стили оси
+                                ticks: { size: 5, stroke: "white" }, // Стили меток оси
+                                axisLabel: { fontSize: 10, padding: 20 }, // Стили названия оси
+                            }}
+                        />
+                        <VictoryAxis
+                            dependentAxis
+                            style={{
+                                grid: { stroke: "white", strokeWidth: 0.5 }, // Стили сетки
+                                tickLabels: { fontSize: 8, fill: "white", fontFamily: 'Noto Sans'}, // Стили меток
+                                axis: { stroke: "white", strokeWidth: 1 }, // Стили оси
+                                ticks: { size: 5, stroke: "white" }, // Стили меток оси
+                                axisLabel: { fontSize: 10, padding: 20 }, // Стили названия оси
+                            }}
+                        />
+                        <VictoryLine
+                            interpolation="natural"
+                            data={monthlyTransactions.map(month => ({ x: month.date, y: month.income }))}
+                            style={(dataPoint, data) => dataPoint.x === monthlyTransactions[monthlyTransactions.length - 1].date ? { data: { stroke: "gold", strokeWidth: 1 } } : { data: { stroke: "lawngreen", strokeWidth: 1 } }}
+                        />
+                        <VictoryScatter
+                            data={monthlyTransactions.map(month => ({ x: month.date, y: month.income }))}
+                            size={(dataPoint, data) => dataPoint.x === monthlyTransactions[monthlyTransactions.length - 1].date ? 5 : 3}
+                            style={(dataPoint, data) => dataPoint.x === monthlyTransactions[monthlyTransactions.length - 1].date ? { data: { fill: "gold" } } : { data: { fill: "lawngreen" } }}
+                        />
+                    </VictoryChart>
+                </div>
+                <div className="graph">
+                    <h2 style={{ fontSize: "24px", fontFamily: 'Noto Sans', color: 'white' }}>Расходы</h2>
+                    <VictoryChart
+                        theme={VictoryTheme.material}
+                        width={350}
+                        height={200}
+                        containerComponent={<VictoryZoomContainer />}
+                        domainPadding={{ x: [20, 20], y: [20, 20] }} // Добавление отступов по осям x и y
+
+                    >
+                        <VictoryAxis
+                            style={{
+                                grid: { stroke: "white", strokeWidth: 0.5 }, // Стили сетки
+                                tickLabels: { fontSize: 8, fill: "white", fontFamily: 'Noto Sans' },
+                                axis: { stroke: "white", strokeWidth: 1 }, // Стили оси
+                                ticks: { size: 5, stroke: "white" }, // Стили меток оси
+                                axisLabel: { fontSize: 10, padding: 20 }, // Стили названия оси
+                            }}
+                        />
+                        <VictoryAxis
+                            dependentAxis
+                            style={{
+                                grid: { stroke: "white", strokeWidth: 0.5 }, // Стили сетки
+                                tickLabels: { fontSize: 8, fill: "white", fontFamily: 'Noto Sans' }, // Стили меток
+                                axis: { stroke: "white", strokeWidth: 1 }, // Стили оси
+                                ticks: { size: 5, stroke: "white" }, // Стили меток оси
+                                axisLabel: { fontSize: 10, padding: 20 }, // Стили названия оси
+                            }}
+                        />
+                        <VictoryLine
+                            interpolation="natural"
+                            data={monthlyTransactions.map(month => ({ x: month.date, y: month.outcome }))}
+                            style={{ data: { stroke: "red", strokeWidth: 1 } }}
+                        />
+                        <VictoryScatter
+                            data={monthlyTransactions.map(month => ({ x: month.date, y: month.outcome }))}
+                            size={3}
+                            style={{ data: { fill: "red" } }}
+                        />
+                    </VictoryChart>
+                </div>
+            </div>
+
             <footer>
                 <a href="https://vk.com/fanis_ng" target="_blank"><i className="fa-brands fa-vk"></i></a>
                 <a href="https://t.me/fanis_ng" target="_blank"><i className="fa-brands fa-telegram"></i></a>
                 <a href="https://www.youtube.com/@fanisnigamadyanov8262/featured" target="_blank"><i className="fa-brands fa-youtube"></i></a>
             </footer>
         </div>
+
+
     );
 }
 export default Predict;
