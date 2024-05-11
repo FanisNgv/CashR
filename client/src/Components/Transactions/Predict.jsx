@@ -159,6 +159,8 @@ const Predict = () => {
     function toggleModalFilter() {
         setModalFilterIsOpened(!modalFilterIsOpened);
     }
+
+
     async function togglePredictTransactions() {
         try {
             const ML_Response = await fetch('http://127.0.0.1:8080/predict', {
@@ -177,11 +179,18 @@ const Predict = () => {
         const expense_predicted_value = data.expense_predicted_value;
 
         // Добавляем предсказанные значения для следующего месяца к monthlyTransactions
-        const nextMonthDate = new Date(monthlyTransactions[monthlyTransactions.length - 1].date);
-        nextMonthDate.setMonth(nextMonthDate.getMonth() + 1);
-        const nextMonth = formatDate(nextMonthDate);
-        const predictedMonthData = { date: nextMonth, income: income_predicted_value, outcome: expense_predicted_value };
-        setMonthlyTransactions([...monthlyTransactions, predictedMonthData]);
+            // Добавляем предсказанные значения для следующего месяца к monthlyTransactions
+            const nextMonthDate = new Date(monthlyTransactions[monthlyTransactions.length - 1].date);
+            nextMonthDate.setMonth(nextMonthDate.getMonth() + 1);
+            const nextMonth = formatDate(nextMonthDate);
+            const predictedMonthData = {
+                date: nextMonth,
+                income: parseFloat(income_predicted_value), // Преобразование строки в число
+                outcome: parseFloat(expense_predicted_value) // Преобразование строки в число
+            };
+
+            // Используем spread оператор для добавления прогнозированных данных в existing monthlyTransactions
+            setMonthlyTransactions(prevTransactions => [...prevTransactions, predictedMonthData]);
 
         } catch (error) {
             console.error(error.message);
@@ -193,7 +202,6 @@ const Predict = () => {
     monthlyTransactions.sort((a, b) => new Date(a.date) - new Date(b.date));
 
     const { income, outcome } = separateTransactionsByType(allTransactions);
-    const monthNames = ["Янв", "Фев", "Мар", "Апр", "Май", "Июн", "Июл", "Авг", "Сен", "Окт", "Ноя", "Дек"];
 
     function getDateValue(dateString) {
         return new Date(dateString).getTime();
@@ -257,13 +265,14 @@ const Predict = () => {
                         <VictoryLine
                             interpolation="natural"
                             data={monthlyTransactions.map(month => ({ x: month.date, y: month.income }))}
-                            style={(dataPoint, data) => dataPoint.x === monthlyTransactions[monthlyTransactions.length - 1].date ? { data: { stroke: "gold", strokeWidth: 1 } } : { data: { stroke: "lawngreen", strokeWidth: 1 } }}
+                            style={{ data: { stroke: "lawngreen", strokeWidth: 1 } }}
                         />
                         <VictoryScatter
                             data={monthlyTransactions.map(month => ({ x: month.date, y: month.income }))}
-                            size={(dataPoint, data) => dataPoint.x === monthlyTransactions[monthlyTransactions.length - 1].date ? 5 : 3}
-                            style={(dataPoint, data) => dataPoint.x === monthlyTransactions[monthlyTransactions.length - 1].date ? { data: { fill: "gold" } } : { data: { fill: "lawngreen" } }}
+                            size={3}
+                            style={{ data: { fill: "lawngreen" } }}
                         />
+                        
                     </VictoryChart>
                 </div>
                 <div className="graph">
@@ -309,11 +318,7 @@ const Predict = () => {
                 </div>
             </div>
 
-            <footer>
-                <a href="https://vk.com/fanis_ng" target="_blank"><i className="fa-brands fa-vk"></i></a>
-                <a href="https://t.me/fanis_ng" target="_blank"><i className="fa-brands fa-telegram"></i></a>
-                <a href="https://www.youtube.com/@fanisnigamadyanov8262/featured" target="_blank"><i className="fa-brands fa-youtube"></i></a>
-            </footer>
+            <footer></footer>
         </div>
 
 

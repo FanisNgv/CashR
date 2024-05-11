@@ -315,11 +315,7 @@ const MainPage = () => {
 
             <br></br>
 
-            <footer>
-                <a href="https://vk.com/fanisngv" target="_blank"><i className="fa-brands fa-vk"></i></a>
-                <a href="https://t.me/FanisNgv" target="_blank"><i className="fa-brands fa-telegram"></i></a>
-                <a href="https://www.youtube.com/@fanisnigamadyanov8262/featured" target="_blank"><i className="fa-brands fa-youtube"></i></a>
-            </footer>
+            <footer></footer>
         </div>
     );
 };

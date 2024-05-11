@@ -8,24 +8,26 @@
     font-size: 32px;
     color: white;
 }
+body {
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.content {
+    flex: 1;
+}
+
 footer {
     line-height: 42px;
     align-items: center;
     display: flex;
-    bottom: 0;
     height: 55px;
     width: 100%;
     background-color: #d90429;
     justify-content: center;
-    gap: 30px;
-}
-
-footer .fa-brands {
-    padding-top: 5px;
-    font-size: 30px;
-    line-height: 50px;
-    transition: .6s;
-    color: #2B2D42;
 }
 .Transactions {
     background-color: #2B2D42;

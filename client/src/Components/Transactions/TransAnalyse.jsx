@@ -177,11 +177,7 @@ const TransAnalyse = () => {
             </Backdrop>
 
             <div id="addGap"></div>
-            <footer>
-                <a href="https://vk.com/fanis_ng" target="_blank"><i className="fa-brands fa-vk"></i></a>
-                <a href="https://t.me/fanis_ng" target="_blank"><i className="fa-brands fa-telegram"></i></a>
-                <a href="https://www.youtube.com/@fanisnigamadyanov8262/featured" target="_blank"><i className="fa-brands fa-youtube"></i></a>
-            </footer>
+            <footer></footer>
         </div>
     );
 }
