@@ -39,22 +39,28 @@ const MainPage = () => {
     
     }];
 
-    useEffect(()=>{
-        const fetchData = (async () => {
-            setIsLoading(true)
+    useEffect(() => {
+        const fetchData = async () => {
+            setIsLoading(true);
 
             const token = localStorage.getItem('token');
             if (!token) {
                 console.error('Token not found in localStorage');
                 return;
             }
+
+            // Очистить список транзакций перед загрузкой новых данных
+            setTransactions([]);
+
             try {
+                // Загрузка информации о пользователе
                 const { data: response } = await axios.get('http://localhost:5000/auth/user', {
                     headers: {
                         Authorization: `Bearer ${token}`,
                     },
                 });
 
+                // Загрузка транзакций
                 const transactionsResponse = await fetch('http://localhost:5000/user/getTransactions', {
                     method: 'POST',
                     headers: {
@@ -68,25 +74,23 @@ const MainPage = () => {
 
                 if (transactionsData.length < 10) {
                     setIsAllLoaded(true);
-                }
-                else{
+                } else {
                     setIsAllLoaded(false);
                 }
 
-                setTransactions(prevTransactions => [...prevTransactions, ...transactionsData]);
-
-                
+                // Установить новый список транзакций
+                setTransactions(transactionsData);
 
                 await new Promise(r => setTimeout(r, 3000));
-
             } catch (error) {
                 console.error(error.message);
             }
 
             setIsLoading(false);
-        })
-        fetchData()
-    }, [currentPage])
+        };
+        fetchData();
+    }, [currentPage]);
+
 
     /* useEffect(() => {
         if (transactions.length < 10) {

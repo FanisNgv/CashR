@@ -193,6 +193,46 @@ class UserController {
             res.status(500).json({ message: 'Произошла ошибка при обновлении информации о пользователе' });
         }
     } 
+    async deleteCategory(req, res) {
+        try{
+            const {id} = req.body;
+            const deleteCategory = await TypesOfTransactions.destroy({ where: { id: id } });
+            res.status(200).json({ message: 'Категория успешно удалена' });
+
+        } catch(error){
+            res.status(500).json({ message: 'Произошла ошибка при удалении категории' });
+
+        }   
+    }
+    async createCategory(req, res) {
+        try {
+
+            console.log(req.body);
+            const { categoryName, isIncome, userID } = req.body; // Извлечение данных из запроса
+
+            // Проверка наличия категории с таким же названием
+            const existingCategory = await TypesOfTransactions.findOne({ where: { name: categoryName, userID: userID } });
+            if (existingCategory) {
+                return res.status(400).json({ message: 'Категория с таким названием уже существует' });
+            }
+
+            // Создание нового объекта категории
+            const newCategory = {
+                name: categoryName,
+                isIncome: isIncome,
+                userID: userID
+            };
+
+            // Добавление новой категории
+            const addedCategory = await TypesOfTransactions.create(newCategory);
+
+            res.status(200).json({ message: 'Категория успешно добавлена', category: addedCategory });
+        } catch (error) {
+            console.error(error);
+            res.status(500).json({ message: 'Произошла ошибка при добавлении категории' });
+        }
+    }
+
 
 
 }

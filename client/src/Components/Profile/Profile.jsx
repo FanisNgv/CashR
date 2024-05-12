@@ -6,12 +6,19 @@ import { Backdrop, CircularProgress } from '@mui/material';
 
 import { UserTransactionContext } from '../../Context'; // Импортируем контекст
 import ModalEditInfo from '../Modals/ModalEditInfo';
+import ModalAddCategory from '../Modals/ModalAddCategory';
+import Menu from "../Menu/Menu";
+
 
 const Profile = () => {
     const { user, setUser, typesOfIncomes, setTypesOfIncomes, typesOfOutcomes, setTypesOfOutcomes } = useContext(UserTransactionContext);
     const [isLoading, setIsLoading] = useState();
     const [menuActive, setMenuActive] = useState(false);
     const [editInfoActive, setEditInfoActive] = useState(false);
+    const [isCategoryIncome, setIsCategoryIncome] = useState(false);
+    const [isCategoryOutcome, setIsCategoryOutcome] = useState(false);
+    const [addCategoryActive, setAddCategoryActive] = useState(false);
+
     const navigate = useNavigate();
 
 
@@ -40,31 +47,68 @@ const Profile = () => {
         return [year, month].join('-');
     }
 
-    function groupTransactionsByMonth(transactions) {
-        let grouped = {};
+    async function handleDeleteCategory(categoryId){
 
-        transactions.forEach(transaction => {
-            let month = formatDate(transaction.dateOfTransaction);
-            if (!grouped[month]) {
-                grouped[month] = { date: month, income: 0, outcome: 0 };
+        setIsLoading(true);
+        const token = localStorage.getItem('token');
+        if (!token) {
+            console.error('Token not found in localStorage');
+            return;
+        }
+
+        try {
+            const deleteCategoryResponse = await fetch('http://localhost:5000/user/deleteCategory', {
+                    method: 'POST',
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ id: categoryId }),
+                });
+
+            // Проверка статуса ответа
+            if (deleteCategoryResponse.ok) {
+                // Получение и отображение сообщения из тела ответа
+                const data = await deleteCategoryResponse.json();
+                alert(data.message);
+            } else {
+                // Обработка ошибок
+                const errorData = await deleteCategoryResponse.json();
+                alert(errorData.message);
             }
-            if (transaction.come === 'Income') {
-                grouped[month].income += parseFloat(transaction.valueOfTransaction);
-            } else if (transaction.come === 'Outcome') {
-                grouped[month].outcome -= parseFloat(transaction.valueOfTransaction);
-            }
-        });
 
-        // Преобразуем объект в массив значений
-        return Object.values(grouped);
-    }
+            const typesOfTransaction = await fetch('http://localhost:5000/user/getTypesOfTransactions', {
+                method: 'POST',
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ userID: user.id }),
+            });
 
-    function separateTransactionsByType(transactions) {
-        const income = transactions.filter(t => t.come === 'Income');
-        const outcome = transactions.filter(t => t.come === 'Outcome');
+            const typesOfTransactionsData = await typesOfTransaction.json()
 
-        return { income, outcome };
-    }
+            const outcomes = [];
+            const incomes = [];
+
+            typesOfTransactionsData.forEach(transaction => {
+                if (transaction.isIncome) {
+                    incomes.push(transaction);
+                } else {
+                    outcomes.push(transaction);
+                }
+            });
+
+
+            await setTypesOfOutcomes(outcomes);
+            await setTypesOfIncomes(incomes);
+
+        } catch (error) {
+            console.error(error.message);
+            setIsLoading(false);
+            alert('Произошла ошибка при удалении категории');
+        }
+    };
 
     function handlePredictClick() {
         navigate('/predict');
@@ -81,6 +125,15 @@ const Profile = () => {
     }
     function toggleEditInfo(){
         setEditInfoActive(!editInfoActive);
+    }
+
+    async function toggleAddIncomeCategory(){
+        setIsCategoryIncome(!isCategoryIncome);
+        setAddCategoryActive(!addCategoryActive);
+    }
+    async function toggleAddOutcomeCategory(){
+        setIsCategoryOutcome(!isCategoryOutcome);
+        setAddCategoryActive(!addCategoryActive);
     }
 
     useEffect(() => {
@@ -106,9 +159,36 @@ const Profile = () => {
                     balance: response.balance,
                 });
 
+                const typesOfTransaction = await fetch('http://localhost:5000/user/getTypesOfTransactions', {
+                    method: 'POST',
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ userID: response.id }),
+                });
+
+                const typesOfTransactionsData = await typesOfTransaction.json()
+
+                const outcomes = [];
+                const incomes = [];
+
+                typesOfTransactionsData.forEach(transaction => {
+                    if (transaction.isIncome) {
+                        incomes.push(transaction);
+                    } else {
+                        outcomes.push(transaction);
+                    }
+                });
+
+
+                await setTypesOfOutcomes(outcomes);
+                await setTypesOfIncomes(incomes);
+
             } catch (error) {
                 console.error(error.message);
             }
+
             setIsLoading(false);
         });
         fetchData();
@@ -133,17 +213,61 @@ const Profile = () => {
                     </div>
                 </div>
             </header>
-
-            <div className="MainInfo">
-                <p>Имя: {user.lastname}</p>
-                <p>Фамилия: {user.firstname}</p>
-                <p>Баланс: {user.balance}&#8381;</p>
-                <p>Почта: {user.email}</p>
+            <div style={{display: 'flex', justifyContent:'space-between'}}>
+                <div className="MainInfo">
+                    <h1 style={{ marginLeft: '25px', fontSize: '32px' }}>Информация о пользователе:</h1>
+                    <h1>Имя: {user.lastname}</h1>
+                    <h1>Фамилия: {user.firstname}</h1>
+                    <h1>Баланс: {user.balance}&#8381;</h1>
+                    <h1>Почта: {user.email}</h1>
+                </div>
+                <div style={{marginRight:'50px'}} className="Actions">
+                    <h1 style={{ fontSize: '32px' }}>Действия:</h1>
+                    <div className="quitElement">
+                        <h1 onClick={handleLogoutClick} >Выйти из аккаунта</h1>
+                        <span className="material-symbols-outlined" style={{ fontSize: '30px' }}>logout</span>
+                    </div>
+                </div>
             </div>
-            <button onClick={toggleEditInfo}>Изменить данные</button>
-            <ModalEditInfo setEditInfoActive = {setEditInfoActive} setIsLoading={setIsLoading} editInfoActive={editInfoActive} typesOfIncomes={typesOfIncomes} typesOfOutcomes={typesOfOutcomes} user={user} setUser={setUser}/>
-        </div>
+            
+            <button onClick={toggleEditInfo} style={{marginLeft: '65px'}}>Изменить данные</button>
 
+            <div className="separator"></div>
+
+            <div className="TransactionCategories">
+                <h1 style={{ marginLeft: '25px', fontSize: '32px' }}>Управление категориями:</h1>
+                <div className="categoriesContainer">
+                    <div className="categoryColumn">
+                        <h1 style={{fontSize: '32px', marginLeft:'60px'}}>Доходы</h1>
+                        {typesOfIncomes.map((incomeCategory, index) => (
+                            <div key={index} style={{ display: 'flex', alignItems: 'baseline', border: '2px solid #EF233C', borderRadius:'10px', padding: '20px' }}>
+                                <p style={{ marginBottom: 0 }}>{incomeCategory.name}</p>
+                                <button type="button" onClick={() => handleDeleteCategory(incomeCategory.id) } style={{width: '100px'}}>Удалить</button>
+                            </div>))}
+                        <button onClick={toggleAddIncomeCategory} style={{ width: '100px', marginLeft: '70px' }}>Добавить</button>
+
+                    </div>
+
+                    <div className="categoryColumn">
+                        <h1 style={{ fontSize: '32px', marginLeft: '60px' }}>Расходы</h1>
+                        {typesOfOutcomes.map((outcomeCategory, index) => (
+                            <div key={index} style={{ display: 'flex', alignItems: 'baseline', border: '2px solid #EF233C', borderRadius: '10px', padding: '20px' }}>
+                                <p style={{ marginBottom: 0 }}>{outcomeCategory.name}</p>
+                                <button type="button" onClick={() => handleDeleteCategory(outcomeCategory.id)} style={{ width: '100px' }}>Удалить</button>
+                            </div>                        
+                        ))}
+                        <button onClick={toggleAddOutcomeCategory} style={{ width: '100px', marginLeft: '70px' }}>Добавить</button>
+                    </div>
+                    
+                </div>
+            </div>
+            <br />
+            <ModalEditInfo setEditInfoActive = {setEditInfoActive} setIsLoading={setIsLoading} editInfoActive={editInfoActive}/>
+            <ModalAddCategory setAddCategoryActive = {setAddCategoryActive} setIsLoading={setIsLoading} addCategoryActive={addCategoryActive} isCategoryIncome={isCategoryIncome} setIsCategoryIncome={setIsCategoryIncome} isCategoryOutcome={isCategoryOutcome} setIsCategoryOutcome={setIsCategoryOutcome}/>
+            <Menu active={menuActive} setActive={setMenuActive} action={true} header={"Главное меню"}
+                items={MenuItems} />
+        </div>
+        
 
     );
 }

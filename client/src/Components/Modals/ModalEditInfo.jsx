@@ -91,10 +91,13 @@ const ModalEditInfo = ({ setEditInfoActive, setIsLoading, editInfoActive }) => {
                 <input type="text" value={email} placeholder={"Введите email"} onChange={(e) => setEmail(e.target.value)} required />
 
                 <h1>Баланс:</h1>
-                <input type="number" value={balance} placeholder={"Введите баланс"} onChange={(e) => setBalance(e.target.value )} required />
+                <input style={{ marginLeft: '150px', width: '300px', height: '40px', fontSize: '16px', border: '1px solid #ccc', borderRadius: '10px' }} type="number" value={balance} placeholder={"Введите баланс"} onChange={(e) => setBalance(e.target.value )} required />
                 <br/>
-                <button onClick={handleUpdateUserInfo}>Изменить</button>
+                <button style={{marginLeft:'210px', marginTop:'80px'}} onClick={handleUpdateUserInfo}>Изменить</button>
+
+                
             </div>
+            
         </div>
     );
 };

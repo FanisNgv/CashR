@@ -67,9 +67,16 @@
     position: relative;
     margin: auto;
 }
+.modal__content .modalAddCategoryButton button {
+    margin-left: 200px;
+    margin-top:320px;
+}
 .modal__content button:hover{
     background-color: #ef233c;
     cursor: pointer;
+}
+.modal__content .modalAddCategoryInput{
+    margin-top: 10px;
 }
 .modal__content button:active{
     background-color: #ef233c;
@@ -87,10 +94,22 @@
     flex-direction: row;
     margin-top: 10px;
 }
+.MainInfo h1{
+    margin-left: 70px;
+    font-size: 32px;
+}
+
+
 
 .modal__content input[type="text"]{
     width: 50%;
     margin:auto;
+}
+
+.categoryColumn p{
+    font-family: 'Noto Sans', sans-serif;
+    font-size: 18px;
+    color: white;
 }
 
 .modal__content #datePickerRange{
