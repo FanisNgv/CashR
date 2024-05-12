@@ -4,18 +4,8 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { Backdrop, CircularProgress } from '@mui/material';
 import { VictoryChart, VictoryLine, VictoryScatter, VictoryZoomContainer, VictoryTheme, VictoryAxis } from 'victory';
-
-import { Link } from "react-router-dom";
 import Menu from "../Menu/Menu";
-import MyDatePickerRange from "../DatePicker/DatePickerRange";
-import { disableBodyScroll, enableBodyScroll } from "body-scroll-lock";
 import ProfileMenu from "../Menu/ProfileMenu";
-import ModalFilterRange from "../Modals/ModalFilterRange"
-
-import IncomePieChart from "../PieCharts/IncomePieCharts";
-import OutcomePieChart from "../PieCharts/OutcomePieCharts";
-import IncomePieBar from "../PieCharts/IncomePieBars";
-import OutcomePieBar from "../PieCharts/OutcomePieBars";
 
 import { UserTransactionContext } from '../../Context'; // Импортируем контекст
 
@@ -99,6 +89,9 @@ const Predict = () => {
     function handleTransClick() {
         navigate('/transactions');
     }
+    function handleProfileClick(){
+        navigate('/profile');
+    }
     function handleLogoutClick() {
         navigate('/login');
         localStorage.clear();
@@ -152,9 +145,6 @@ const Predict = () => {
 
     function toggleMenu() {
         setMenuActive(!menuActive);
-    }
-    function toggleProfile() {
-        setProfileActive(!profileActive);
     }
     function toggleModalFilter() {
         setModalFilterIsOpened(!modalFilterIsOpened);
@@ -216,7 +206,7 @@ const Predict = () => {
                         <div className="userIcon">
                             <span className="material-symbols-outlined">person</span>
                         </div>
-                        <h1>{user.lastname} {user.firstname}</h1>
+                        <h1 onClick={handleProfileClick}>{user.lastname} {user.firstname}</h1>
                     </div>
                 </div>
             </header>
@@ -318,7 +308,9 @@ const Predict = () => {
                 </div>
             </div>
 
-            <footer></footer>
+            <footer>
+                
+            </footer>
         </div>
 
 

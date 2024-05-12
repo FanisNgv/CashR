@@ -177,29 +177,22 @@ class UserController {
         }
     }
     
-    /* async updateTransaction(req, res) {
+     async updateUser(req, res) {
         try {
-            const transactionID = req.params.transactionID; // Получаем ID транзакции из URL параметра
+            const {id, firstname, lastname, email, balance} = req.body;
 
-            // Извлекаем данные для обновления из тела запроса
-            const { userID, come, valueOfTransaction, typeOfTransaction, dateOfTransaction } = req.body;
-
-            // Обновляем транзакцию в базе данных
-            const updatedTransaction = await Transaction.update(
-                { userID, come, valueOfTransaction, typeOfTransaction, dateOfTransaction },
-                { where: { id: transactionID } }
+            const updatedUser = await User.update(
+                { firstname, lastname, email, balance},
+                { where: { id: id } }
             );
+            const user = await User.findByPk(id);
 
-            if (!updatedTransaction[0]) {
-                return res.status(404).json({ message: 'Транзакция не найдена' });
-            }
-
-            res.status(200).json({ message: 'Транзакция успешно обновлена' });
+            res.status(200).json({ message: 'Информация о пользователе обновлена', user: user });
         } catch (error) {
             console.error(error);
-            res.status(500).json({ message: 'Произошла ошибка при обновлении транзакции' });
+            res.status(500).json({ message: 'Произошла ошибка при обновлении информации о пользователе' });
         }
-    } */
+    } 
 
 
 }

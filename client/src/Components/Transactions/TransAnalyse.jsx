@@ -57,6 +57,9 @@ const TransAnalyse = () => {
     function handleTransClick() {
         navigate('/transactions');
     }
+    function handleProfileClick() {
+        navigate('/profile');
+    }
     function handleLogoutClick() {
         navigate('/login');
         localStorage.clear();
@@ -135,7 +138,7 @@ const TransAnalyse = () => {
                         <div className="userIcon">
                             <span className="material-symbols-outlined">person</span>
                         </div>
-                        <h1>{user.lastname} {user.firstname}</h1>
+                        <h1 onClick={handleProfileClick}>{user.lastname} {user.firstname}</h1>
                     </div>
                 </div>
             </header>
