@@ -192,7 +192,15 @@ const MainPage = () => {
             console.log(currentPage);
         }
         else{
-            alert('Все транзакции загружены');
+            alert('Вы уже находитесь на последней странице');
+        }
+    }
+    function toggleLoadPrevTransactions() {
+        if (currentPage !== 1) {
+            setCurrentPage(currentPage - 1);
+        }
+        else {
+            alert('Вы уже находитесь на первой странице');
         }
     }
     function getDateValue(dateString) {
@@ -210,18 +218,6 @@ const MainPage = () => {
         return new Date(dateString).getTime();
     }
 
-    /* 
-        const [standartSet, setStandartSet] = useState([]);
-
-    useEffect(() => {
-        const srtdTransactions = [...transactions].sort(function (a, b) {
-            return getDateValue(b.dateOfTransaction) - getDateValue(a.dateOfTransaction);
-        });
-        setStandartSet(srtdTransactions);
-    }, [transactions]) */
-
-
-
     return (
         <div className="Transactions">
             <header>
@@ -238,8 +234,7 @@ const MainPage = () => {
             <div className="MainContent">
                 <div className="firstRow">
                     <button onClick={toggleAddTransaction}>Добавить транзакцию</button>
-                    <button onClick={toggleFilterTransactions}>Фильтр</button>    
-    
+                    <span onClick={toggleFilterTransactions} className="material-symbols-outlined">filter_list</span>    
                 </div>
    
             </div>
@@ -314,8 +309,9 @@ const MainPage = () => {
 
 
             <div className="loadTransactions">
-                <button onClick={toggleLoadTransactions}>Загрузить еще</button>
-            </div> 
+                <button onClick={toggleLoadPrevTransactions}>Назад</button>
+                <button onClick={toggleLoadTransactions}>Вперед</button>
+            </div>
 
             <Menu active={menuActive} setActive={setMenuActive} action={true} header={"Главное меню"}
                 items={MenuItems} />

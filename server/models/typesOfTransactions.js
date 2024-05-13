@@ -6,7 +6,7 @@ class typesOfTransactions extends Model {}
 typesOfTransactions.init({
     id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
     userID: {type: DataTypes.INTEGER, allowNull: false, unique: false},
-    name: { type: DataTypes.STRING, allowNull: false, unique: true },
+    name: { type: DataTypes.STRING, allowNull: false, unique: false },
     isIncome: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false },
 }, {
     sequelize,
@@ -34,4 +34,4 @@ async function createDefaultTransactionTypes(userId) {
     }
 }
 
-module.exports = typesOfTransactions;
+module.exports = { typesOfTransactions, createDefaultTransactionTypes };

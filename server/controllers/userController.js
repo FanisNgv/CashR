@@ -9,7 +9,7 @@ const axios = require('axios');
 
 const User = require('../models/user');
 const Transaction = require('../models/transaction')
-const TypesOfTransactions = require('../models/typesOfTransactions')
+const { typesOfTransactions, createDefaultTransactionTypes } = require('../models/typesOfTransactions');
 
 const { Op } = require('sequelize'); // Импортируем операторы для Sequelize
 const { transaction } = require('../db');
@@ -129,11 +129,11 @@ class UserController {
     async getTypesOfTransactions(req, res) {
         try {
             const { userID } = req.body;
-            const typesOfTransactions = await TypesOfTransactions.findAll({
+            const TypesOfTransactions = await typesOfTransactions.findAll({
                 where: { userID: userID }
             });
 
-            res.status(200).json(typesOfTransactions); // отправляем клиенту все транзакции со статусом 200
+            res.status(200).json(TypesOfTransactions); // отправляем клиенту все транзакции со статусом 200
         } catch (error) {
             console.error(error);
             res.status(500).json({ message: 'Произошла ошибка при получении типа транзакций' });
@@ -196,7 +196,7 @@ class UserController {
     async deleteCategory(req, res) {
         try{
             const {id} = req.body;
-            const deleteCategory = await TypesOfTransactions.destroy({ where: { id: id } });
+            const deleteCategory = await typesOfTransactions.destroy({ where: { id: id } });
             res.status(200).json({ message: 'Категория успешно удалена' });
 
         } catch(error){
@@ -211,7 +211,7 @@ class UserController {
             const { categoryName, isIncome, userID } = req.body; // Извлечение данных из запроса
 
             // Проверка наличия категории с таким же названием
-            const existingCategory = await TypesOfTransactions.findOne({ where: { name: categoryName, userID: userID } });
+            const existingCategory = await typesOfTransactions.findOne({ where: { name: categoryName, userID: userID } });
             if (existingCategory) {
                 return res.status(400).json({ message: 'Категория с таким названием уже существует' });
             }
@@ -224,7 +224,7 @@ class UserController {
             };
 
             // Добавление новой категории
-            const addedCategory = await TypesOfTransactions.create(newCategory);
+            const addedCategory = await typesOfTransactions.create(newCategory);
 
             res.status(200).json({ message: 'Категория успешно добавлена', category: addedCategory });
         } catch (error) {

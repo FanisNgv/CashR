@@ -135,6 +135,19 @@ button:active {
     transform: translateY(3px);
     transition-duration: 0.3s;
 }
+.firstRow .material-symbols-outlined {
+    cursor: pointer;
+}
+.firstRow .material-symbols-outlined:hover {
+    color: #d5d5d5;
+}
+
+.firstRow {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+}
+
 .filterRow .material-symbols-outlined {
     cursor: pointer;
 

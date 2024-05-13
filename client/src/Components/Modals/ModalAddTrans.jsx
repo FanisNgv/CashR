@@ -134,7 +134,7 @@ const ModalAddTrans = ({ setAddTransactionIsOpened, setIsLoading, addTransaction
 
                 <h1>Введите сумму:</h1>
                 <div className="amountOfTrans">
-                    <input type="number" placeholder={"Введите сумму"} value={sumOfTrans} onChange={(e) => setSumOfTrans(e.target.value)} required />
+                    <input type="number" style={{ border: '1px solid #ccc', borderRadius: '10px' }} placeholder={"Введите сумму"} value={sumOfTrans} onChange={(e) => setSumOfTrans(e.target.value)} required />
                 </div>
 
                 <h1>Введите дату:</h1>

@@ -3,7 +3,7 @@ require('dotenv').config();
 const express = require('express'); // Импортируем модуль express as express. Это удобный веб-фреймворк, при помощи которого удобно делать HTTP запросы
 const sequelize = require('./db'); // Выполняется код из db.js, а затем получается результат с него, а именно экспорт
 const PORT = process.env.PORT || 5000; // Выбор порта
-//const axios = require('axios');
+const axios = require('axios');
 
 const cors = require("cors")
 
