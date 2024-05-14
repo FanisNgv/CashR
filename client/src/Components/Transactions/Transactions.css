@@ -158,6 +158,10 @@ button:active {
     font-family: 'Noto Sans', sans-serif;
 }
 
+.graphContainer {
+    z-index: 2;
+}
+
 .filterRow .material-symbols-outlined:hover {
     color: #d5d5d5;
 }

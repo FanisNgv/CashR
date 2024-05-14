@@ -318,7 +318,6 @@ const MainPage = () => {
 
             <br></br>
 
-            <footer></footer>
         </div>
     );
 };

@@ -180,7 +180,6 @@ const TransAnalyse = () => {
             </Backdrop>
 
             <div id="addGap"></div>
-            <footer></footer>
         </div>
     );
 }

@@ -6,6 +6,7 @@
     left: 0;
     transform: translateX(-130%);
     transition: all 0.4s;
+    z-index: 1;
 }
 
 .menu.active {
@@ -20,6 +21,8 @@
     top: 0;
     left: 0;
     transition: backdrop-filter 1.5s;
+    z-index: 1;
+    /* Установите z-index выше, чем у.menu */
 }
 .menu__content{
     width: 30%;

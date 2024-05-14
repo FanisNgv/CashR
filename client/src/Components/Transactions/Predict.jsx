@@ -149,9 +149,15 @@ const Predict = () => {
     function toggleModalFilter() {
         setModalFilterIsOpened(!modalFilterIsOpened);
     }
-
-
+    
     async function togglePredictTransactions() {
+        if (monthlyTransactions.length === 1) {
+            const { income, outcome } = separateTransactionsByType(allTransactions);
+            if (income.length === 0 || outcome.length === 0) {
+                alert("Не хватает данных для прогнозирования. Пожалуйста, добавьте данные по каждому типу транзакции.");
+                return;
+            }
+        }
         try {
             const ML_Response = await fetch('http://127.0.0.1:8080/predict', {
                 method: 'POST',
@@ -212,7 +218,7 @@ const Predict = () => {
             </header>
 
             <div className="firstRow">
-                <button onClick={togglePredictTransactions}>Спрогнозировать расходы</button>
+                <button onClick={togglePredictTransactions}>Спрогнозировать данные</button>
             </div>
 
             <Menu active={menuActive} setActive={setMenuActive} action={true} header={"Главное меню"} items={MenuItems} />
@@ -307,13 +313,7 @@ const Predict = () => {
                     </VictoryChart>
                 </div>
             </div>
-
-            <footer>
-                
-            </footer>
         </div>
-
-
     );
 }
 export default Predict;
