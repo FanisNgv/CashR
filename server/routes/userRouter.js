@@ -14,5 +14,9 @@ router.post('/getAllTransactions', authMiddleware, controller.getAllTransactions
 router.post('/updateUser', authMiddleware, controller.updateUser);
 router.post('/deleteCategory', authMiddleware, controller.deleteCategory);
 router.post('/createCategory', authMiddleware, controller.createCategory);
+router.post('/createLimitation', authMiddleware, controller.createLimitation);
+router.post('/deleteLimitation', authMiddleware, controller.deleteLimitation); 
+
+
 
 module.exports = router;

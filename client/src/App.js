@@ -9,6 +9,7 @@ import PTransAnalyse from './Components/Transactions/TransAnalyse';
 import {UserTransactionProvider} from './Context';
 import PPredict from "./Components/Transactions/Predict";
 import PProfile from "./Components/Profile/Profile";
+import PTransLimitations from "./Components/Transactions/TransLimitations";
 
 
 
@@ -37,6 +38,10 @@ function App() {
 
                 <Route exct path='/profile' element={<PrivateRoute />}>
                     <Route exact path='/profile' element={<PProfile />} />
+                </Route>
+
+                <Route exct path='/limitations' element={<PrivateRoute />}>
+                    <Route exact path='/limitations' element={<PTransLimitations />} />
                 </Route>
 
             </Routes>

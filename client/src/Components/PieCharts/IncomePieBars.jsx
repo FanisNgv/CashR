@@ -46,6 +46,7 @@ const IncomePieBar = ({ filteredTransactions }) => {
                     >
                         <VictoryBar
                             data={data}
+                            barWidth={40}
                             labelRadius={100}
                             style={{
                                 labels: { fontSize: 20, fill: "white" },

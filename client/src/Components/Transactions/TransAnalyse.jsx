@@ -44,13 +44,24 @@ const TransAnalyse = () => {
         action: handlePredictClick,
         icon: "predict"
 
+    },
+    {
+        value: "Ограничения",
+        action: handleTransLimitationsClick,
+        icon: "limitations"
     }];
 
-    const ProfileItems = [{ value: "Выйти", action: handleLogoutClick, icon: "logout" }]
+    
+
 
     function handlePredictClick(){
         navigate('/predict');
     }
+
+    function handleTransLimitationsClick() {
+        navigate('/limitations');
+    }
+
     function handleTransAnalyseClick() {
         navigate('/transAnalyse');
     }
@@ -59,10 +70,6 @@ const TransAnalyse = () => {
     }
     function handleProfileClick() {
         navigate('/profile');
-    }
-    function handleLogoutClick() {
-        navigate('/login');
-        localStorage.clear();
     }
 
     useEffect(() => {
@@ -174,7 +181,6 @@ const TransAnalyse = () => {
 
             <Menu active={menuActive} setActive={setMenuActive} action={true} header={"Главное меню"}
                 items={MenuItems} />
-            <ProfileMenu items={ProfileItems} userBalance={user.balance} userEmail={user.email} active={profileActive} setActive={setProfileActive} action={true} header={"Профиль"} />
             <Backdrop open={isLoading}>
                 <CircularProgress />
             </Backdrop>

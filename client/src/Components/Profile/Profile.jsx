@@ -31,6 +31,11 @@ const Profile = () => {
         action: handlePredictClick,
         icon: "predict"
 
+    },
+    {
+        value: "Ограничения",
+        action: handleTransLimitationsClick,
+        icon: "limitations"
     }];
 
     function formatDate(date) {
@@ -122,6 +127,9 @@ const Profile = () => {
     function handleLogoutClick() {
         navigate('/login');
         localStorage.clear();
+    }
+    function handleTransLimitationsClick() {
+        navigate('/limitations');
     }
     function toggleEditInfo(){
         setEditInfoActive(!editInfoActive);

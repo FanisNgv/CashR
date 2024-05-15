@@ -7,7 +7,8 @@ import numpy as np
 app = Flask(__name__)
 
 # Загружаем модель
-model = load_model("lstm_model.h5")
+outcomes_model = load_model("lstm_outcomes_model.h5")
+incomes_model = load_model("lstm_incomes_model.h5")
 
 # Метод для создания датасета
 def create_dataset(dataset, look_back=1):
@@ -76,16 +77,16 @@ def receive_data():
 
         # Предсказываем доходы и расходы на следующий месяц
         if len(income_dataset) > 0:
-            income_testPredict = model.predict(income_dataset[-1].reshape(1, look_back, 1))
+            income_testPredict = incomes_model.predict(income_dataset[-1].reshape(1, look_back, 1))
             income_predicted_value = round(income_scaler.inverse_transform(income_testPredict)[0][0], 2)
         else:
             income_predicted_value = 0  # или другое значение по умолчанию, если нет данных для предсказания
 
         if len(expense_dataset) > 0:
-            expense_testPredict = model.predict(expense_dataset[-1].reshape(1, look_back, 1))
+            expense_testPredict = outcomes_model.predict(expense_dataset[-1].reshape(1, look_back, 1))
             expense_predicted_value = round(expense_scaler.inverse_transform(expense_testPredict)[0][0], 2)
         else:
-            expense_predicted_value = 0  # или другое значение по умолчанию, если нет данных для предсказания
+            expense_predicted_value = 0
 
         print(expense_predicted_value, " ", income_predicted_value)
         # Ответ клиенту с предсказанными значениями

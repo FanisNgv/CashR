@@ -37,6 +37,11 @@ const MainPage = () => {
         action: handlePredictClick,
         icon: "predict"
     
+    },
+    {
+        value: "Ограничения",
+        action: handleTransLimitationsClick,
+        icon: "limitations"
     }];
 
     useEffect(() => {
@@ -163,6 +168,10 @@ const MainPage = () => {
     }
     function toggleMenu() {
         setMenuActive(!menuActive);
+    }
+    function handleTransLimitationsClick(){
+        navigate('/limitations');
+    
     }
     function handlePredictClick() {
         navigate('/predict');

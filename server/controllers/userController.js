@@ -13,8 +13,43 @@ const { typesOfTransactions, createDefaultTransactionTypes } = require('../model
 
 const { Op } = require('sequelize'); // Импортируем операторы для Sequelize
 const { transaction } = require('../db');
+const { type } = require('os');
 
 class UserController {
+
+     async deleteLimitation(req, res) {
+         try {
+             const { typeOfTransID} = req.body;
+
+             let existingLimitation = await typesOfTransactions.findOne({ where: { id: typeOfTransID } });
+
+             if (existingLimitation) {
+                 existingLimitation.limitationValue = null;
+                 await existingLimitation.save();
+             }
+             res.status(200).json({ message: 'Ограничение успешно удалено!' });
+         } catch (error) {
+             console.error(error);
+             res.status(500).json({ message: 'Произошла ошибка при удалении ограничения' });
+         }
+    }
+
+    async createLimitation(req, res) {
+        try {
+            const { typeOfTransID, limitationValue } = req.body;
+
+            let existingLimitation = await typesOfTransactions.findOne({ where: { id: typeOfTransID } });
+
+            if (existingLimitation) {
+                existingLimitation.limitationValue = limitationValue; 
+                await existingLimitation.save();
+            }
+            res.status(200).json({ message: 'Ограничение успешно создано!' });
+        } catch (error) {
+            console.error(error);
+            res.status(500).json({ message: 'Произошла ошибка при создании ограничения' });
+        }
+    } 
 
     async createTransaction(req, res) {
         try {

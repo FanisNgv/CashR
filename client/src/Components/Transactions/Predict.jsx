@@ -36,7 +36,14 @@ const Predict = () => {
         action: handlePredictClick,
         icon: "predict"
 
+    },
+    {
+        value: "Ограничения",
+        action: handleTransLimitationsClick,
+        icon: "limitations"
     }];
+
+    
 
     const ProfileItems = [{ value: "Выйти", action: handleLogoutClick, icon: "logout" }]
 
@@ -78,6 +85,10 @@ const Predict = () => {
         const outcome = transactions.filter(t => t.come === 'Outcome');
 
         return { income, outcome };
+    }
+
+    function handleTransLimitationsClick() {
+        navigate('/limitations');
     }
 
     function handlePredictClick() {
@@ -151,13 +162,12 @@ const Predict = () => {
     }
     
     async function togglePredictTransactions() {
-        if (monthlyTransactions.length === 1) {
-            const { income, outcome } = separateTransactionsByType(allTransactions);
-            if (income.length === 0 || outcome.length === 0) {
-                alert("Не хватает данных для прогнозирования. Пожалуйста, добавьте данные по каждому типу транзакции.");
-                return;
-            }
+
+        if(monthlyTransactions.length <= 2){
+            alert('Недостаточно данных для прогнозирования')
+            return
         }
+
         try {
             const ML_Response = await fetch('http://127.0.0.1:8080/predict', {
                 method: 'POST',
@@ -217,9 +227,7 @@ const Predict = () => {
                 </div>
             </header>
 
-            <div className="firstRow">
-                <button onClick={togglePredictTransactions}>Спрогнозировать данные</button>
-            </div>
+            
 
             <Menu active={menuActive} setActive={setMenuActive} action={true} header={"Главное меню"} items={MenuItems} />
             <ProfileMenu items={ProfileItems} userBalance={user.balance} userEmail={user.email} active={profileActive} setActive={setProfileActive} action={true} header={"Профиль"} />
@@ -230,7 +238,7 @@ const Predict = () => {
             {/* Графики доходов и расходов */}
             <div className="graphContainer">
                 <div className="graph">
-                    <h2 style={{ fontSize: "24px", fontFamily: 'Noto Sans', color: 'white' }}>Доходы</h2>
+                    <h2 style={{ fontSize: "24px", fontFamily: 'Noto Sans', color: 'white', marginTop: '20px' }}>Доходы</h2>
                     <VictoryChart
                         theme={VictoryTheme.material}
                         width={350}
@@ -257,6 +265,8 @@ const Predict = () => {
                                 ticks: { size: 5, stroke: "white" }, // Стили меток оси
                                 axisLabel: { fontSize: 10, padding: 20 }, // Стили названия оси
                             }}
+                            domain={[0, Math.max(...monthlyTransactions.map(month => month.income)) * 1.5]} // Устанавливаем диапазон оси Y
+
                         />
                         <VictoryLine
                             interpolation="natural"
@@ -269,10 +279,12 @@ const Predict = () => {
                             style={{ data: { fill: "lawngreen" } }}
                         />
                         
+                        
                     </VictoryChart>
                 </div>
+
                 <div className="graph">
-                    <h2 style={{ fontSize: "24px", fontFamily: 'Noto Sans', color: 'white' }}>Расходы</h2>
+                    <h2 style={{ fontSize: "24px", fontFamily: 'Noto Sans', color: 'white', marginTop: '20px' }}>Расходы</h2>
                     <VictoryChart
                         theme={VictoryTheme.material}
                         width={350}
@@ -289,6 +301,7 @@ const Predict = () => {
                                 ticks: { size: 5, stroke: "white" }, // Стили меток оси
                                 axisLabel: { fontSize: 10, padding: 20 }, // Стили названия оси
                             }}
+
                         />
                         <VictoryAxis
                             dependentAxis
@@ -299,6 +312,8 @@ const Predict = () => {
                                 ticks: { size: 5, stroke: "white" }, // Стили меток оси
                                 axisLabel: { fontSize: 10, padding: 20 }, // Стили названия оси
                             }}
+                            domain={[0, Math.max(...monthlyTransactions.map(month => month.outcome)) * 1.5]} // Устанавливаем диапазон оси Y
+
                         />
                         <VictoryLine
                             interpolation="natural"
@@ -312,6 +327,9 @@ const Predict = () => {
                         />
                     </VictoryChart>
                 </div>
+            </div>
+            <div style={{display: "flex", justifyContent: "center", alignItems: "center"}}>
+                <button onClick={togglePredictTransactions}>Спрогнозировать данные</button>
             </div>
         </div>
     );
