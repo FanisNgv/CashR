@@ -1,25 +1,59 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const {validationResult} = require('express-validator');
-const {secret} = require("../config");
+const { validationResult } = require('express-validator');
+const { secret } = require("../config");
 const express = require("express");
 const path = require("path")
 const bodyParser = require('body-parser');
+const axios = require('axios');
 
 const User = require('../models/user');
 const Transaction = require('../models/transaction')
-const TypesOfTransactions = require('../models/typesOfTransactions')
+const { typesOfTransactions, createDefaultTransactionTypes } = require('../models/typesOfTransactions');
 
-const { Op} = require('sequelize'); // Импортируем операторы для Sequelize
+const { Op } = require('sequelize'); // Импортируем операторы для Sequelize
 const { transaction } = require('../db');
+const { type } = require('os');
 
 class UserController {
+
+     async deleteLimitation(req, res) {
+         try {
+             const { typeOfTransID} = req.body;
+
+             let existingLimitation = await typesOfTransactions.findOne({ where: { id: typeOfTransID } });
+
+             if (existingLimitation) {
+                 existingLimitation.limitationValue = null;
+                 await existingLimitation.save();
+             }
+             res.status(200).json({ message: 'Ограничение успешно удалено!' });
+         } catch (error) {
+             console.error(error);
+             res.status(500).json({ message: 'Произошла ошибка при удалении ограничения' });
+         }
+    }
+
+    async createLimitation(req, res) {
+        try {
+            const { typeOfTransID, limitationValue } = req.body;
+
+            let existingLimitation = await typesOfTransactions.findOne({ where: { id: typeOfTransID } });
+
+            if (existingLimitation) {
+                existingLimitation.limitationValue = limitationValue; 
+                await existingLimitation.save();
+            }
+            res.status(200).json({ message: 'Ограничение успешно создано!' });
+        } catch (error) {
+            console.error(error);
+            res.status(500).json({ message: 'Произошла ошибка при создании ограничения' });
+        }
+    } 
 
     async createTransaction(req, res) {
         try {
             const { userID, come, valueOfTransaction, typeOfTransaction, dateOfTransaction } = req.body; // парсим тело http ответа по этим переменным
-
-            console.log(req.body)
 
             // Находим пользователя и обновляем его баланс
             const user = await User.findByPk(userID);
@@ -58,14 +92,12 @@ class UserController {
     async updateTransaction(req, res) {
         try {
             const { userID, transactionID, come, valueOfTransaction, typeOfTransaction, dateOfTransaction } = req.body; // парсим тело http ответа по этим переменным
-            
-            console.log(req.body)
 
             const user = await User.findByPk(userID);
             if (!user) {
                 throw new Error('Пользователь не найден');
             }
-            
+
             const [numUpdatedRows, updatedTransaction] = await Transaction.update(
                 { come, valueOfTransaction, typeOfTransaction, dateOfTransaction },
                 { returning: true, where: { id: transactionID } } // Добавляем опцию returning: true для получения обновленной транзакции
@@ -81,6 +113,23 @@ class UserController {
         } catch (error) {
             console.error(error);
             res.status(500).json({ message: 'Произошла ошибка при создании транзакции' });
+        }
+    }
+    async getAllTransactions(req, res) {
+        try {
+            const { userID } = req.body;
+
+            const transactions = await Transaction.findAll({
+                where: { userID: userID }
+            });
+
+            const plainTransactions = transactions.map(transaction => transaction.get({ plain: true }));
+            console.log(plainTransactions)
+            res.status(200).json(plainTransactions);
+
+        } catch (error) {
+            console.error(error);
+            res.status(500).json({ message: 'Произошла ошибка при получении транзакций' });
         }
     }
 
@@ -115,38 +164,19 @@ class UserController {
     async getTypesOfTransactions(req, res) {
         try {
             const { userID } = req.body;
-            const typesOfTransactions = await TypesOfTransactions.findAll({
+            const TypesOfTransactions = await typesOfTransactions.findAll({
                 where: { userID: userID }
             });
 
-<<<<<<< HEAD
-            res.status(200).json(typesOfTransactions); // отправляем клиенту все транзакции со статусом 200
+            res.status(200).json(TypesOfTransactions); // отправляем клиенту все транзакции со статусом 200
         } catch (error) {
             console.error(error);
-            res.status(500).json({ message: 'Произошла ошибка при получении типа транзакций'});
-=======
-    async deleteTransaction(req, res) {
-        try {
-            const transactionID = req.params.transactionID; // Получаем ID транзакции из URL параметра, т.е. значение ID получается из параметра маршрута
-
-            // Удаляем транзакцию из базы данных
-            const deletedTransaction = await Transaction.destroy({ where: { id: transactionID } });
-
-            if (!deletedTransaction) {
-                return res.status(404).json({ message: 'Транзакция не найдена' });
-            }
-
-            res.status(200).json({ message: 'Транзакция успешно удалена' });
-        } catch (error) {
-            console.error(error);
-            res.status(500).json({ message: 'Произошла ошибка при удалении транзакции' });
->>>>>>> c55257bca6f830e073b8803cc16b72c6d6f155a2
+            res.status(500).json({ message: 'Произошла ошибка при получении типа транзакций' });
         }
     }
 
     async deleteTransaction(req, res) {
         try {
-            console.log(req)
             const { userID, transactionID, come, valueOfTransaction, typeOfTransaction, dateOfTransaction } = req.body; // парсим тело http ответа по этим переменным
 
             // Удаляем транзакцию из базы данных
@@ -162,30 +192,82 @@ class UserController {
             res.status(500).json({ message: 'Произошла ошибка при удалении транзакции' });
         }
     }
-
-    /* async updateTransaction(req, res) {
+    async sendDataToAPI() {
         try {
-            const transactionID = req.params.transactionID; // Получаем ID транзакции из URL параметра
+            // Данные для отправки
+            const data = {
+                user_input: 0.5 // Пример данных
+            };
 
-            // Извлекаем данные для обновления из тела запроса
-            const { userID, come, valueOfTransaction, typeOfTransaction, dateOfTransaction } = req.body;
+            // URL вашего Flask API
+            const url = 'http://127.0.0.1:8080/predict';
 
-            // Обновляем транзакцию в базе данных
-            const updatedTransaction = await Transaction.update(
-                { userID, come, valueOfTransaction, typeOfTransaction, dateOfTransaction },
-                { where: { id: transactionID } }
+            // Отправка POST-запроса на API
+            const response = await axios.post(url, data);
+
+            // Вывод ответа от сервера
+            console.log(response.data);
+        } catch (error) {
+            console.error('Ошибка:', error);
+        }
+    }
+    
+     async updateUser(req, res) {
+        try {
+            const {id, firstname, lastname, email, balance} = req.body;
+
+            const updatedUser = await User.update(
+                { firstname, lastname, email, balance},
+                { where: { id: id } }
             );
+            const user = await User.findByPk(id);
 
-            if (!updatedTransaction[0]) {
-                return res.status(404).json({ message: 'Транзакция не найдена' });
-            }
-
-            res.status(200).json({ message: 'Транзакция успешно обновлена' });
+            res.status(200).json({ message: 'Информация о пользователе обновлена', user: user });
         } catch (error) {
             console.error(error);
-            res.status(500).json({ message: 'Произошла ошибка при обновлении транзакции' });
+            res.status(500).json({ message: 'Произошла ошибка при обновлении информации о пользователе' });
         }
-    } */
+    } 
+    async deleteCategory(req, res) {
+        try{
+            const {id} = req.body;
+            const deleteCategory = await typesOfTransactions.destroy({ where: { id: id } });
+            res.status(200).json({ message: 'Категория успешно удалена' });
+
+        } catch(error){
+            res.status(500).json({ message: 'Произошла ошибка при удалении категории' });
+
+        }   
+    }
+    async createCategory(req, res) {
+        try {
+
+            console.log(req.body);
+            const { categoryName, isIncome, userID } = req.body; // Извлечение данных из запроса
+
+            // Проверка наличия категории с таким же названием
+            const existingCategory = await typesOfTransactions.findOne({ where: { name: categoryName, userID: userID } });
+            if (existingCategory) {
+                return res.status(400).json({ message: 'Категория с таким названием уже существует' });
+            }
+
+            // Создание нового объекта категории
+            const newCategory = {
+                name: categoryName,
+                isIncome: isIncome,
+                userID: userID
+            };
+
+            // Добавление новой категории
+            const addedCategory = await typesOfTransactions.create(newCategory);
+
+            res.status(200).json({ message: 'Категория успешно добавлена', category: addedCategory });
+        } catch (error) {
+            console.error(error);
+            res.status(500).json({ message: 'Произошла ошибка при добавлении категории' });
+        }
+    }
+
 
 
 }

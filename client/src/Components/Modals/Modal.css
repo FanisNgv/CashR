@@ -10,6 +10,7 @@
     transform:scale(0);
     transition-duration: 0.2s;
 }
+
 #selectButOfDev{
     position: absolute;
     bottom: 80px;
@@ -21,6 +22,15 @@
     transform:scale(1);
     transition-duration: 0.4s;
 }
+
+.modal__filter{
+    padding: 0;
+    border-radius: 12px;
+    background-color: white;
+    height: 600px;
+    width: 600px;
+}
+
 .modal__content{
     padding: 0;
     border-radius: 12px;
@@ -57,9 +67,16 @@
     position: relative;
     margin: auto;
 }
+.modal__content .modalAddCategoryButton button {
+    margin-left: 200px;
+    margin-top:320px;
+}
 .modal__content button:hover{
     background-color: #ef233c;
     cursor: pointer;
+}
+.modal__content .modalAddCategoryInput{
+    margin-top: 10px;
 }
 .modal__content button:active{
     background-color: #ef233c;
@@ -72,9 +89,27 @@
     flex-direction: row;
     margin-top: 100px;
 }
+.modal__content .buttonFilterRow{
+    display: flex;
+    flex-direction: row;
+    margin-top: 10px;
+}
+.MainInfo h1{
+    margin-left: 70px;
+    font-size: 32px;
+}
+
+
+
 .modal__content input[type="text"]{
     width: 50%;
     margin:auto;
+}
+
+.categoryColumn p{
+    font-family: 'Noto Sans', sans-serif;
+    font-size: 18px;
+    color: white;
 }
 
 .modal__content #datePickerRange{
@@ -82,20 +117,22 @@
     justify-content: center;
 }
 .modal__content #datePickerRange button {
-    margin-top: 0;
-    margin-left: 0;
-    cursor: pointer;
-    padding: 0;
-    width: 20px;
-    height: 20px;
-    background-color: #202231;
+    align-items: center;
+    background: none;
+    display: flex;
+    justify-content: center;
     text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    border: 1px;
-    border-radius: 20px;
-    transition-duration: 0.5s;
+    cursor: pointer;
+    position: absolute;
+    top: 2px;
+    padding: 0;
+    border: none;
     z-index: 1;
+    height: 32px;
+    width: 32px;
+    text-indent: -999em;
+    overflow: hidden;
+    margin: 0;
 }
 
 .dateOfTrans button{
@@ -115,13 +152,12 @@
     text-indent: -999em;
     overflow: hidden;
     margin: 0;
-    
 }
+
 .modal__content .addButton button {
     margin-top: 100px;
     width: 150px;
     margin-left: 220px;
-    /* Устанавливаем расположение кнопки относительно правого края модального окна */
 }
 
 .come{
@@ -145,6 +181,7 @@
     justify-content: center;
     width: auto;
 }
+
 .rangeOfSum{
     display: flex;
     justify-content: center;

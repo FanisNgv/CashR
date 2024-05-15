@@ -10,9 +10,11 @@ export const UserTransactionProvider = ({ children }) => {
         email: ""
     });
     const [transactions, setTransactions] = useState([]);
+    const [typesOfOutcomes, setTypesOfOutcomes] = useState([]);
+    const [typesOfIncomes, setTypesOfIncomes] = useState([]);
 
     return (
-        <UserTransactionContext.Provider value={{ user, setUser, transactions, setTransactions }}>
+        <UserTransactionContext.Provider value={{ user, setUser, transactions, setTransactions, typesOfIncomes, setTypesOfIncomes, typesOfOutcomes, setTypesOfOutcomes }}>
             {children}
         </UserTransactionContext.Provider>
     );

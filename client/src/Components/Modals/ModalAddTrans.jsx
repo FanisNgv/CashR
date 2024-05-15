@@ -27,6 +27,41 @@ const ModalAddTrans = ({ setAddTransactionIsOpened, setIsLoading, addTransaction
         }
     }, [come])
 
+    
+    async function checkCategoryLimitation(transactionsData, transaction) {
+        try {
+            if (transaction.come === 'Outcome') {
+                const currentDate = new Date();
+                const currentMonth = currentDate.getMonth();
+                const currentYear = currentDate.getFullYear();
+                console.log(currentMonth, currentYear, currentDate);
+                // Фильтруем транзакции по выбранной категории и текущему месяцу
+                const categoryTransactions = transactionsData.filter(trans =>
+                    trans.typeOfTransaction === transaction.typeOfTransaction &&
+                    new Date(trans.dateOfTransaction).getMonth() === currentMonth &&
+                    new Date(trans.dateOfTransaction).getFullYear() === currentYear
+                );
+                console.log(categoryTransactions);
+                // Суммируем значения расходов
+                const totalExpenses = categoryTransactions.reduce((total, transaction) =>
+                    total - (transaction.valueOfTransaction), 0);
+                console.log(totalExpenses);
+                // Получаем ограничение на категорию
+                const categoryLimitation = (typesOfOutcomes.find(type => type.name === transaction.typeOfTransaction).limitationValue);
+                // Проверяем, превышено ли ограничение
+                console.log(categoryLimitation)
+                if (categoryLimitation && (totalExpenses > categoryLimitation)) {
+                    alert("Превышено ограничение на категорию: " + transaction.typeOfTransaction);
+                    return false;
+                }
+            }
+            return true; // Ограничение не превышено или категория не выбрана
+        } catch (error) {
+            console.error('Ошибка при проверке ограничения:', error);
+            return false;
+        }
+    }
+
 
 
     async function handleCreateTransClick() {
@@ -85,8 +120,28 @@ const ModalAddTrans = ({ setAddTransactionIsOpened, setIsLoading, addTransaction
                 ...user,
                 balance: response.balance,
             });
+            const transactionsResponse = await fetch('http://localhost:5000/user/getAllTransactions', {
+                method: 'POST',
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ userID: user.id }),
+            });
 
+            const transactionsData = await transactionsResponse.json();
+
+            const updatedTransactionsData = [...transactionsData, transaction];
+
+
+            const isLimitationExceeded = await checkCategoryLimitation(updatedTransactionsData, transaction);
+
+
+
+            setSelectedType("");
             setStartDate(new Date());
+            setSumOfTrans('');
+            setAddTransactionIsOpened(false);
             setIsLoading(false);
             
         } catch (error) {
@@ -109,7 +164,7 @@ const ModalAddTrans = ({ setAddTransactionIsOpened, setIsLoading, addTransaction
                             name="come"
                             id="Income"
                             value="Income"
-                            onChange={(e) => setCome(e.target.value)}
+                            onChange={(e) => { setCome(e.target.value); setSelectedType("") }}
                         />
                         <label htmlFor="Income">Доход</label>
                     </div>
@@ -119,7 +174,7 @@ const ModalAddTrans = ({ setAddTransactionIsOpened, setIsLoading, addTransaction
                             name="come"
                             id="Outcome"
                             value="Outcome"
-                            onChange={(e) => setCome(e.target.value)}
+                            onChange={(e) => { setCome(e.target.value); setSelectedType("")}}
                         />
                         <label htmlFor="Outcome">Расход</label>
                     </div>
@@ -131,7 +186,7 @@ const ModalAddTrans = ({ setAddTransactionIsOpened, setIsLoading, addTransaction
 
                 <h1>Введите сумму:</h1>
                 <div className="amountOfTrans">
-                    <input type="number" placeholder={"Введите сумму"} onChange={(e) => setSumOfTrans(e.target.value)} required />
+                    <input type="number" style={{ border: '1px solid #ccc', borderRadius: '10px' }} placeholder={"Введите сумму"} value={sumOfTrans} onChange={(e) => setSumOfTrans(e.target.value)} required />
                 </div>
 
                 <h1>Введите дату:</h1>

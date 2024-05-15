@@ -7,7 +7,7 @@ const express = require("express");
 const path = require("path")
 const bodyParser = require('body-parser');
 const User = require('../models/user');
-const { createDefaultTransactionTypes } = require('../models/typesOfTransactions');
+const { typesOfTransactions, createDefaultTransactionTypes } = require('../models/typesOfTransactions');
 
 
 

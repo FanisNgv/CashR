@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import MyDatePicker from "./DatePicker";
 
 const MyDatePickerRange=({startDate, setStartDate, endDate, setEndDate}) => {
 

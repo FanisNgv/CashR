@@ -1,13 +1,11 @@
 import React, { useState, useEffect } from "react";
 import Select from "react-select";
 
-const MultiSelect = ({selectedTypes, setSelectedTypes}) => {
-
-    const[typesOfComes, setTypesOfComes] = useState(["Еда", "Здоровье", "Спорт", "Жилье", "Зарплата", "Стипендия"]);
+const MultiSelect = ({ selectedTypes, setSelectedTypes, typesOfComes }) => {
 
     const options = typesOfComes.map((typeOfCome) => ({
-        label: typeOfCome,
-        value: typeOfCome,
+        label: typeOfCome.name,
+        value: typeOfCome.name,
     }));
 
     const handleSelectedTypes = (selectedOptions) => {

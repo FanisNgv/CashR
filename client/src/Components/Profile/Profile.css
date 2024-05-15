@@ -3,11 +3,13 @@
     margin: 0;
     box-sizing: border-box;
 }
-.BarText{
+
+.BarText {
     font-family: 'Noto Sans', sans-serif;
     font-size: 32px;
     color: white;
 }
+
 body {
     margin: 0;
     padding: 0;
@@ -15,9 +17,24 @@ body {
     flex-direction: column;
     min-height: 100vh;
 }
-
+.Actions h1 {
+    margin-left: 70px;
+    font-size: 32px;
+}
 .content {
     flex: 1;
+}
+.quitElement{
+    
+    display: flex;
+    align-items: center;
+}
+.quitElement h1:hover{
+    color: #d5d5d5;
+}
+
+.quitElement h1{
+    cursor: pointer;
 }
 
 footer {
@@ -29,6 +46,13 @@ footer {
     background-color: #d90429;
     justify-content: center;
 }
+
+.categoriesContainer{
+    display: flex;
+    justify-content: space-evenly;
+    flex-direction: row;
+}
+
 .Transactions {
     background-color: #2B2D42;
     width: 100%;
@@ -41,26 +65,33 @@ footer {
 *::-webkit-scrollbar {
     display: none;
 }
-.Logo{
-    cursor:pointer;
-}
-.Logo:hover{
-    color: #d5d5d5;
-}
-.userName h1{
+
+.Logo {
     cursor: pointer;
 }
-.userName h1:hover{
+
+.Logo:hover {
     color: #d5d5d5;
 }
-.userName h1{
+
+.userName h1 {
+    cursor: pointer;
+}
+
+.userName h1:hover {
+    color: #d5d5d5;
+}
+
+.userName h1 {
     line-height: 1.16;
 }
-.MainBar{
+
+.MainBar {
     display: flex;
     flex-direction: row;
 }
-.userName{
+
+.userName {
     padding-left: 10px;
     padding-right: 10px;
     width: 100%;
@@ -69,11 +100,13 @@ footer {
     flex-direction: row;
     gap: 5px;
 }
-.loadTransactions{
+
+.loadTransactions {
     display: flex;
     justify-content: center;
     flex-direction: row;
 }
+
 .daySeparator {
     margin-left: 80px;
     margin-top: 20px;
@@ -81,6 +114,14 @@ footer {
     font-size: 18px;
     color: white;
 }
+
+.separator {
+    width: 100%;
+    height: 5px;
+    background-color: #EF233C;
+    margin-top: 20px;
+}
+
 button {
     cursor: pointer;
     font-size: 16px;
@@ -95,22 +136,26 @@ button {
     border-radius: 10px;
     transition-duration: 0.5s;
 }
+
 button:hover {
     background-color: #ef233c;
     cursor: pointer;
 }
+
 button:active {
     background-color: #ef233c;
     box-shadow: 0 5px #ef233c;
     transform: translateY(3px);
     transition-duration: 0.3s;
 }
+
 .fullWidthSkeleton {
     opacity: 1;
     /* Начальная непрозрачность */
     transition: opacity 1.5s ease;
     /* Плавная анимация исчезновения */
-} 
+}
+
 .transRow {
     font-size: 20px;
     color: white;
@@ -125,80 +170,32 @@ button:active {
     padding-right: 20px;
     transition-duration: 0.5s;
 }
-.transRow:hover{
+
+.transRow:hover {
     background-color: #3854F2;
     cursor: pointer;
 }
-.transRow:active{
+
+.transRow:active {
     background-color: #3854F2;
     box-shadow: 0 5px #3854F2;
     transform: translateY(3px);
     transition-duration: 0.3s;
 }
-.firstRow .material-symbols-outlined {
-    cursor: pointer;
-}
-.firstRow .material-symbols-outlined:hover {
-    color: #d5d5d5;
-}
 
-.firstRow {
-    display: flex;
-    justify-content: space-between;
-    align-items: baseline;
-}
-
-.mainContent .material-symbols-outlined {
+.filterRow .material-symbols-outlined {
     cursor: pointer;
 
 }
+
 .filterRow h2 {
     font-size: 25px;
     color: white;
     font-family: 'Noto Sans', sans-serif;
 }
 
-.graphContainer {
-    z-index: 2;
-}
-.limitationElements {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    border: 2px solid #EF233C;
-    border-radius: 10px;
-    padding: 20px;
-    width: 50%;
-    margin-left: 25%;
-    transition-duration: 0.5s;
-}
-
-.limitationElements:hover{
-    background-color: #3854F2;
-    cursor: pointer;
-}
-.limitationElements:active{
-    background-color: #3854F2;
-    box-shadow: 0 5px #3854F2;
-    transform: translateY(3px);
-    transition-duration: 0.3s;
-}
-
-.mainContent .material-symbols-outlined:hover {
+.filterRow .material-symbols-outlined:hover {
     color: #d5d5d5;
-}
-.mainContent table{
-    font-size: 25px;
-    color: white;
-    font-family: 'Noto Sans', sans-serif;
-    border-collapse: separate;
-    border-spacing: 10px;
-    width: 100%;
-}
-.mainContent td, th{
-    padding: 20px;
-    border: 2px solid #EF233C;
-    border-radius: 10px;
 }
 
 .filterRow {
@@ -208,11 +205,11 @@ button:active {
 }
 
 .resultRow {
-    margin-left: 50px;
     display: flex;
     justify-content: space-between;
     border: 2px solid #EF233C;
     border-radius: 10px;
+    margin-right: 75px;
 }
 
 .resultRow h2 {
@@ -241,41 +238,11 @@ button:active {
     width: 45%;
 }
 
-.Transactions .transHeader {
-    display: flex;
-    justify-content: space-between;
-    font-size: 36px;
-    color: white;
-    font-family: 'Noto Sans', sans-serif;
-    margin:20px;
-}
-.comeIncome {
-    color: lawngreen;
-}
 
-.comeOutcome {
-    color: #EF233C;
-}
-.mainContent .material-symbols-outlined{
-    float: right;
-    margin-right: 10px;
-}
-.material-symbols-outlined{
-    color:white;
+
+.material-symbols-outlined {
+    color: white;
     font-size: 40px;
     margin-left: 10px;
     vertical-align: bottom;
-}
-.PieCharts {
-    margin-top: 50px;
-    display: flex;
-    justify-content: center;
-    gap: 200px;
-}
-
-.PieBars {
-    margin-top: 100px;
-    display: flex;
-    justify-content: center;
-    gap: 200px;
 }
