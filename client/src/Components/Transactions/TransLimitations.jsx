@@ -134,8 +134,9 @@ const TransLimitations = () => {
 
             
             <div className="categoryColumn">
-                <h1 style={{ fontSize: '32px', marginLeft: '60px' }}>Выберите расход, на который хотите наложить ограничение</h1>
-                <br />
+                <div style={{ marginTop: '25px' }}></div>
+                <h1 style={{ fontSize: '32px', marginLeft: '60px' }}>Выберите расход, на который хотите наложить месячное ограничение</h1>
+                <div style={{marginTop: '50px'}}></div>
                 {typesOfOutcomes.map((outcomeCategory, index) => {
                     return (
                         <div className="limitationElements"

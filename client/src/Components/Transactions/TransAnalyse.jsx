@@ -152,19 +152,22 @@ const TransAnalyse = () => {
 
 
             <div className="mainContent">
-                <div className="filterRow">
-                    <h2>Баланс:</h2>
-                    <h2>Общий оборот за период:</h2>
-                    <h2>Общий расход за период:</h2>
-                    <h2>Общий доход за период:</h2>
-                    <span onClick={toggleModalFilter} className="material-symbols-outlined">filter_list</span>
-                </div>
-                <div className="resultRow">
-                    <h2>{user.balance}р.</h2>
-                    <h2>{total}</h2>
-                    <h2>{expensesSum}</h2>
-                    <h2>{incomesSum}</h2>
-                </div>
+                <table>
+                    <tr>
+                        <th>Баланс:</th>
+                        <th>Оборот за период:</th>
+                        <th>Расход за период:</th>
+                        <th>Доход за период:</th>
+                    </tr>
+                    <tr>
+                        <td>{user.balance}&#8381;</td>
+                        <td>{total}&#8381;</td>
+                        <td>{expensesSum}&#8381;</td>
+                        <td>{incomesSum}&#8381;</td>
+                    </tr>
+                </table>
+                
+                <span onClick={toggleModalFilter} className="material-symbols-outlined">filter_list</span>
 
             </div>
             <div className="PieCharts">

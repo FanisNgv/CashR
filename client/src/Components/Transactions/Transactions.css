@@ -148,7 +148,7 @@ button:active {
     align-items: baseline;
 }
 
-.filterRow .material-symbols-outlined {
+.mainContent .material-symbols-outlined {
     cursor: pointer;
 
 }
@@ -184,9 +184,23 @@ button:active {
     transition-duration: 0.3s;
 }
 
-.filterRow .material-symbols-outlined:hover {
+.mainContent .material-symbols-outlined:hover {
     color: #d5d5d5;
 }
+.mainContent table{
+    font-size: 25px;
+    color: white;
+    font-family: 'Noto Sans', sans-serif;
+    border-collapse: separate;
+    border-spacing: 10px;
+    width: 100%;
+}
+.mainContent td, th{
+    padding: 20px;
+    border: 2px solid #EF233C;
+    border-radius: 10px;
+}
+
 .filterRow {
     display: flex;
     justify-content: space-between;
@@ -194,11 +208,11 @@ button:active {
 }
 
 .resultRow {
+    margin-left: 50px;
     display: flex;
     justify-content: space-between;
     border: 2px solid #EF233C;
     border-radius: 10px;
-    margin-right: 75px;
 }
 
 .resultRow h2 {
@@ -241,6 +255,10 @@ button:active {
 
 .comeOutcome {
     color: #EF233C;
+}
+.mainContent .material-symbols-outlined{
+    float: right;
+    margin-right: 10px;
 }
 .material-symbols-outlined{
     color:white;

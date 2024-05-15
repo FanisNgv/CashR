@@ -148,7 +148,7 @@ const MainPage = () => {
                         outcomes.push(transaction);
                     }
                 });
-
+                console.log(outcomes)
                 
                 await setTypesOfOutcomes(outcomes);
                 await setTypesOfIncomes(incomes);
@@ -157,6 +157,7 @@ const MainPage = () => {
                 console.error(error.message);
             }
             setIsLoading(false);
+            
             
         });
         fetchData();
@@ -247,10 +248,7 @@ const MainPage = () => {
                 </div>
    
             </div>
-            <div className="transHeader">
-                <div><p>Тип транзакции</p></div>
-                <div><p>Сумма</p></div>
-            </div>
+            
             {isLoading ? (
                 <div className="fullWidthSkeleton">
                     <Box sx={{ display: 'flex', flexDirection: 'column', gap: '10px', width: '90%', margin: 'auto' }}>
