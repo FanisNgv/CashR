@@ -54,30 +54,32 @@ const ModalCurrentTrans = ({ setCurrentTransModalIsOpened, transaction, setIsLoa
         };
 
         try {
-            axios.put('http://localhost:5000/user/deleteTransaction', deletingTransaction, {
+            const deleteTransactionResponse = await fetch('http://localhost:5000/user/deleteTransaction', {
+                method: 'DELETE',
                 headers: {
-                    'Content-Type': 'application/json',
                     Authorization: `Bearer ${token}`,
+                    'Content-Type': 'application/json'
                 },
-            })
-                .then(res => {
-                    const deletedTransactionID = res.data.deletedTransactionID;
-                    
-                    setTransactions(prevTransactions =>
-                        prevTransactions.filter(transaction => transaction.id !== deletedTransactionID)
-                    );
-                })
-                .catch(error => {
-                    console.error('Произошла ошибка:', error);
-                });
+                body: JSON.stringify(deletingTransaction) // Передача данных для удаления в теле запроса
+            });
+
+            if (deleteTransactionResponse.ok) {
+                const responseData = await deleteTransactionResponse.json();
+                const deletedTransactionID = responseData.deletedTransactionID;
+                setTransactions(prevTransactions =>
+                    prevTransactions.filter(transaction => transaction.id !== deletedTransactionID)
+                );
+                alert(responseData.message);
+            } else {
+                alert('Произошла ошибка при удалении транзакции');
+            }
 
             setSelectedType("");
             setStartDate(new Date());
             setSumOfTrans();
             setCurrentTransModalIsOpened(false);
             setIsLoading(false);
-
-        } catch (error) {
+        }  catch (error) {
             console.error(error.message);
             setIsLoading(false);
             alert('Произошла ошибка при создании транзакции');
@@ -116,35 +118,36 @@ const ModalCurrentTrans = ({ setCurrentTransModalIsOpened, transaction, setIsLoa
         }
 
         try {
-            axios.put('http://localhost:5000/user/updateTransaction', updatingTransaction, {
+            const updateTransactionResponse = await fetch('http://localhost:5000/user/updateTransaction', {
+                method: 'PUT',
                 headers: {
-                    'Content-Type': 'application/json',
                     Authorization: `Bearer ${token}`,
+                    'Content-Type': 'application/json'
                 },
-            })
-                .then(res => {
-                    const updatedTransaction = res.data.transaction;
-                    console.log("Это обновленная транзакция "+ updatedTransaction)
-                    setTransactions(prevTransactions =>
-                        prevTransactions.map(transaction =>
-                            transaction.id === updatedTransaction[0].id ? updatedTransaction[0] : transaction
-                        )
-                    );
-                    console.log(transactions)
-                })
-                .catch(error => {
-                    console.error('Произошла ошибка:', error);
-                });
-            setSelectedType("");
-            setStartDate(new Date());
-            setSumOfTrans();
-            setCurrentTransModalIsOpened(false);
-            setIsLoading(false);
+                body: JSON.stringify(updatingTransaction) // Передача данных для обновления в теле запроса
+            });
 
+            if (updateTransactionResponse.ok) {
+                const responseData = await updateTransactionResponse.json();
+                const updatedTransaction = responseData.transaction;
+                setTransactions(prevTransactions =>
+                    prevTransactions.map(transaction =>
+                        transaction.id === updatedTransaction[0].id ? updatedTransaction[0] : transaction
+                    )
+                );
+                setSelectedType("");
+                setStartDate(new Date());
+                setSumOfTrans();
+                setCurrentTransModalIsOpened(false);
+                setIsLoading(false);
+                alert(responseData.message);
+            } else {
+                console.error('Произошла ошибка:', updateTransactionResponse.statusText);
+            }
         } catch (error) {
             console.error(error.message);
             setIsLoading(false);
-            alert('Произошла ошибка при создании транзакции');
+            alert('Произошла ошибка при обновлении транзакции');
         }
     }
 

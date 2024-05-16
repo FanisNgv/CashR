@@ -84,14 +84,6 @@ const ModalFilter = ({ setModalFilterIsOpened, modalFilterIsOpened, setSortedTra
         });
     }
 
-    /*const srtdTransactions = [...transactions].sort(function(a, b) {
-        return getDateValue(b.dateOfTransaction) - getDateValue(a.dateOfTransaction);
-    });
-    setSortedTransactions(srtdTransactions);
-
-    function getDateValue(dateString) {
-        return new Date(dateString).getTime();
-    }*/
     function filterByDate(transactions, startDate, endDate) {
         const filteredTransactions = transactions.filter((transaction) => {
             const transactionDate = new Date(transaction.dateOfTransaction);

@@ -1,6 +1,5 @@
 import React, { useEffect, useState, useContext } from 'react';
 import './Transactions.css';
-import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { Backdrop, CircularProgress } from '@mui/material';
 
@@ -16,7 +15,7 @@ import OutcomePieChart from "../PieCharts/OutcomePieCharts";
 import IncomePieBar from "../PieCharts/IncomePieBars";
 import OutcomePieBar from "../PieCharts/OutcomePieBars";
 
-import { UserTransactionContext } from '../../Context'; // Импортируем контекст
+import { UserTransactionContext } from '../../Context';
 
 
 const TransAnalyse = () => {
@@ -81,21 +80,25 @@ const TransAnalyse = () => {
                 return;
             }
             try {
-                const { data: response } = await axios.get('http://localhost:5000/auth/user', {
+                const userResponse = await fetch('http://localhost:5000/auth/user', {
                     headers: {
                         Authorization: `Bearer ${token}`,
                     },
                 });
 
+                if (!userResponse.ok) {
+                    throw new Error('Ошибка при получении данных пользователя');
+                }
+
+                const userData = await userResponse.json();
+
                 await setUser({
-                    id: response.id,
-                    lastname: response.lastname,
-                    firstname: response.firstname,
-                    email: response.email,
-                    balance: response.balance,
+                    id: userData.id,
+                    lastname: userData.lastname,
+                    firstname: userData.firstname,
+                    email: userData.email,
+                    balance: userData.balance,
                 });
-            
-                
 
                 const transactionsResponse = await fetch('http://localhost:5000/user/getAllTransactions', {
                     method: 'POST',
@@ -103,13 +106,16 @@ const TransAnalyse = () => {
                         Authorization: `Bearer ${token}`,
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({ userID: response.id}),
+                    body: JSON.stringify({ userID: userData.id }),
                 });
+
+                if (!transactionsResponse.ok) {
+                    throw new Error('Ошибка при получении транзакций пользователя');
+                }
 
                 const transactionsData = await transactionsResponse.json();
                 setAllTransactions(transactionsData);
                 setFilteredTransactions(transactionsData);
-
 
             } catch (error) {
                 console.error(error.message);

@@ -112,7 +112,7 @@ class UserController {
             res.status(200).json({ message: 'Транзакция успешно обновлена!', transaction: updatedTransaction });
         } catch (error) {
             console.error(error);
-            res.status(500).json({ message: 'Произошла ошибка при создании транзакции' });
+            res.status(500).json({ message: 'Произошла ошибка при обновлении транзакции' });
         }
     }
     async getAllTransactions(req, res) {
@@ -222,7 +222,7 @@ class UserController {
             );
             const user = await User.findByPk(id);
 
-            res.status(200).json({ message: 'Информация о пользователе обновлена', user: user });
+            res.status(200).json({ message: 'Информация о пользователе обновлена!', user: user });
         } catch (error) {
             console.error(error);
             res.status(500).json({ message: 'Произошла ошибка при обновлении информации о пользователе' });

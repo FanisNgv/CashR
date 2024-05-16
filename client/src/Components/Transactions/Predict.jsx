@@ -117,18 +117,23 @@ const Predict = () => {
                 return;
             }
             try {
-                const { data: response } = await axios.get('http://localhost:5000/auth/user', {
+                const userResponse = await fetch('http://localhost:5000/auth/user', {
                     headers: {
                         Authorization: `Bearer ${token}`,
                     },
                 });
 
+                if (!userResponse.ok) {
+                    throw new Error('Ошибка при получении данных пользователя');
+                }
+                const userData = await userResponse.json();
+
                 await setUser({
-                    id: response.id,
-                    lastname: response.lastname,
-                    firstname: response.firstname,
-                    email: response.email,
-                    balance: response.balance,
+                    id: userData.id,
+                    lastname: userData.lastname,
+                    firstname: userData.firstname,
+                    email: userData.email,
+                    balance: userData.balance,
                 });
 
                 const transactionsResponse = await fetch('http://localhost:5000/user/getAllTransactions', {
@@ -137,7 +142,7 @@ const Predict = () => {
                         Authorization: `Bearer ${token}`,
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({ userID: response.id }),
+                    body: JSON.stringify({ userID: userData.id }),
                 });
                 
                 const transactionsData = await transactionsResponse.json();
@@ -162,6 +167,8 @@ const Predict = () => {
     }
     
     async function togglePredictTransactions() {
+
+        setIsLoading(true);
 
         if(monthlyTransactions.length <= 2){
             alert('Недостаточно данных для прогнозирования')
@@ -197,9 +204,12 @@ const Predict = () => {
 
             // Используем spread оператор для добавления прогнозированных данных в existing monthlyTransactions
             setMonthlyTransactions(prevTransactions => [...prevTransactions, predictedMonthData]);
+            setIsLoading(false);
 
         } catch (error) {
             console.error(error.message);
+            setIsLoading(false);
+
         }
     }
     
@@ -212,6 +222,8 @@ const Predict = () => {
     function getDateValue(dateString) {
         return new Date(dateString).getTime();
     }
+
+    
 
     return (
         <div className="Transactions">
@@ -255,6 +267,8 @@ const Predict = () => {
                                 ticks: { size: 5, stroke: "white" }, // Стили меток оси
                                 axisLabel: { fontSize: 10, padding: 20 }, // Стили названия оси
                             }}
+                            
+
                         />
                         <VictoryAxis
                             dependentAxis

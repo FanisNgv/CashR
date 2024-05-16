@@ -51,7 +51,6 @@ def receive_data():
         df_income_aggregated = df_income.groupby(['year', 'month'])['valueOfTransaction'].sum().reset_index()
         df_expense_aggregated = df_expense.groupby(['year', 'month'])['valueOfTransaction'].apply(
             lambda x: x.abs().sum()).reset_index()
-
         # Создаем последовательность данных для модели для доходов и расходов
         income_all_data = df_income_aggregated['valueOfTransaction'].values.reshape(-1, 1)
         expense_all_data = df_expense_aggregated['valueOfTransaction'].values.reshape(-1, 1)

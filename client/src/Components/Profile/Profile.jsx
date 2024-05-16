@@ -63,7 +63,7 @@ const Profile = () => {
 
         try {
             const deleteCategoryResponse = await fetch('http://localhost:5000/user/deleteCategory', {
-                    method: 'POST',
+                    method: 'DELETE',
                     headers: {
                         Authorization: `Bearer ${token}`,
                         'Content-Type': 'application/json'
@@ -71,13 +71,10 @@ const Profile = () => {
                     body: JSON.stringify({ id: categoryId }),
                 });
 
-            // Проверка статуса ответа
             if (deleteCategoryResponse.ok) {
-                // Получение и отображение сообщения из тела ответа
                 const data = await deleteCategoryResponse.json();
                 alert(data.message);
             } else {
-                // Обработка ошибок
                 const errorData = await deleteCategoryResponse.json();
                 alert(errorData.message);
             }

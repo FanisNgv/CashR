@@ -39,13 +39,10 @@ const ModalAddCategory = ({ setAddCategoryActive, setIsLoading, addCategoryActiv
                 body: JSON.stringify({ categoryName: newCategory.name, isIncome: newCategory.isIncome, userID: newCategory.userID }),
             });
 
-            // Проверка статуса ответа
             if (addCategoryResponse.ok) {
-                // Получение и отображение сообщения из тела ответа
                 const data = await addCategoryResponse.json();
                 alert(data.message);
             } else {
-                // Обработка ошибок
                 const errorData = await addCategoryResponse.json();
                 alert(errorData.message);
             }
