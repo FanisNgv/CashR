@@ -174,22 +174,26 @@ const Predict = () => {
             alert('Недостаточно данных для прогнозирования')
             return
         }
+        const token = localStorage.getItem('token');
+        if (!token) {
+            console.error('Token not found in localStorage');
+            return;
+        }
 
         try {
-            const ML_Response = await fetch('http://127.0.0.1:8080/predict', {
+            const ML_Prediction = await fetch('http://localhost:5000/user/getPredictions', {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json' // Добавление заголовка Content-Type
+                    Authorization: `Bearer ${token}`,
+                    'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ transactions: allTransactions }),
+                body: JSON.stringify({ userID: user.id }),
             });
-            // Проверяем, что запрос прошел успешно
-           // Преобразуем тело ответа в объект JSON
-        const data = await ML_Response.json();
 
+            const data = await ML_Prediction.json();
         // Извлекаем предсказанные значения из объекта data
-        const income_predicted_value = data.income_predicted_value;
-        const expense_predicted_value = data.expense_predicted_value;
+        const income_predicted_value = data.predictions.income_predicted_value;
+        const expense_predicted_value = data.predictions.expense_predicted_value;
 
         // Добавляем предсказанные значения для следующего месяца к monthlyTransactions
             // Добавляем предсказанные значения для следующего месяца к monthlyTransactions

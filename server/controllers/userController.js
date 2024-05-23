@@ -71,12 +71,9 @@ class UserController {
 
             let balance = user.balance;
 
-            // Если это был доход, то прибавляем транзакцию
-            if (come === 'Income') {
-                balance += parseFloat(valueOfTransaction);
-            } else if (come === 'Outcome') {
-                balance -= parseFloat(valueOfTransaction);
-            }
+            
+            balance += parseFloat(valueOfTransaction);
+            
             const createdTransaction = await Transaction.findByPk(newTransaction.id);
 
             // Обновляем баланс пользователя
@@ -124,7 +121,6 @@ class UserController {
             });
 
             const plainTransactions = transactions.map(transaction => transaction.get({ plain: true }));
-            console.log(plainTransactions)
             res.status(200).json(plainTransactions);
 
         } catch (error) {
@@ -192,25 +188,7 @@ class UserController {
             res.status(500).json({ message: 'Произошла ошибка при удалении транзакции' });
         }
     }
-    async sendDataToAPI() {
-        try {
-            // Данные для отправки
-            const data = {
-                user_input: 0.5 // Пример данных
-            };
-
-            // URL вашего Flask API
-            const url = 'http://127.0.0.1:8080/predict';
-
-            // Отправка POST-запроса на API
-            const response = await axios.post(url, data);
-
-            // Вывод ответа от сервера
-            console.log(response.data);
-        } catch (error) {
-            console.error('Ошибка:', error);
-        }
-    }
+    
     
      async updateUser(req, res) {
         try {
@@ -242,7 +220,6 @@ class UserController {
     async createCategory(req, res) {
         try {
 
-            console.log(req.body);
             const { categoryName, isIncome, userID } = req.body; // Извлечение данных из запроса
 
             // Проверка наличия категории с таким же названием
@@ -262,6 +239,24 @@ class UserController {
             const addedCategory = await typesOfTransactions.create(newCategory);
 
             res.status(200).json({ message: 'Категория успешно добавлена', category: addedCategory });
+        } catch (error) {
+            console.error(error);
+            res.status(500).json({ message: 'Произошла ошибка при добавлении категории' });
+        }
+    }
+
+    async getPredictions(req, res) {
+        try {
+            const {userID } = req.body; // Извлечение данных из запроса
+            const transactions = await Transaction.findAll({
+                where: { userID: userID }
+            });
+
+            const plainTransactions = transactions.map(transaction => transaction.get({ plain: true }));
+
+            const response = await axios.post('http://127.0.0.1:8080/predict', { transactions: plainTransactions });
+            const predictions = response.data;
+            res.status(200).json({ message: 'Прогноз получен', predictions });
         } catch (error) {
             console.error(error);
             res.status(500).json({ message: 'Произошла ошибка при добавлении категории' });

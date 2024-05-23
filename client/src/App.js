@@ -1,17 +1,15 @@
 import React, {useContext, useEffect, useState} from 'react';
 import {BrowserRouter, Navigate, Route, Router, Routes} from "react-router-dom";
+import PrivateRoute from "./Components/PrivateRoute/PrivateRoute";
 import PHome from "./Pages/home";
 import PLogin from "./Pages/login"
 import PRegistration from "./Pages/registration"
 import PTransactions from "./Pages/transactions"
-import PrivateRoute from "./Components/PrivateRoute/PrivateRoute";
-import PTransAnalyse from './Components/Transactions/TransAnalyse';
+import PTransAnalyse from './Pages/transanalyse';
 import {UserTransactionProvider} from './Context';
-import PPredict from "./Components/Transactions/Predict";
-import PProfile from "./Components/Profile/Profile";
-import PTransLimitations from "./Components/Transactions/TransLimitations";
-
-
+import PPredict from "./Pages/predict";
+import PProfile from "./Pages/profile";
+import PTransLimitations from "./Pages/translimitations";
 
 
 function App() {

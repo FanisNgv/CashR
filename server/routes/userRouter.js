@@ -16,6 +16,7 @@ router.delete('/deleteCategory', authMiddleware, controller.deleteCategory);
 router.post('/createCategory', authMiddleware, controller.createCategory);
 router.post('/createLimitation', authMiddleware, controller.createLimitation);
 router.post('/deleteLimitation', authMiddleware, controller.deleteLimitation); 
+router.post('/getPredictions', authMiddleware, controller.getPredictions);
 
 
 
