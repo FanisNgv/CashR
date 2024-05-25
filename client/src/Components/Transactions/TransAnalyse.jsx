@@ -166,10 +166,10 @@ const TransAnalyse = () => {
                         <th>Доход за период:</th>
                     </tr>
                     <tr>
-                        <td>{user.balance}&#8381;</td>
-                        <td>{total}&#8381;</td>
-                        <td>{expensesSum}&#8381;</td>
-                        <td>{incomesSum}&#8381;</td>
+                        <td>{user.balance && user.balance.toFixed(2)}&#8381;</td>
+                        <td>{total && total.toFixed(2)}&#8381;</td>
+                        <td>{expensesSum && expensesSum.toFixed(2)}&#8381;</td>
+                        <td>{incomesSum && incomesSum.toFixed(2)}&#8381;</td>
                     </tr>
                 </table>
                 

@@ -223,7 +223,7 @@ const Profile = () => {
                     <h1 style={{ marginLeft: '25px', fontSize: '32px' }}>Информация о пользователе:</h1>
                     <h1>Имя: {user.lastname}</h1>
                     <h1>Фамилия: {user.firstname}</h1>
-                    <h1>Баланс: {user.balance}&#8381;</h1>
+                    <h1>Баланс: {user.balance && user.balance.toFixed(2)}&#8381;</h1>
                     <h1>Почта: {user.email}</h1>
                 </div>
                 <div style={{marginRight:'50px'}} className="Actions">
