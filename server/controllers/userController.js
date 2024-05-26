@@ -94,9 +94,17 @@ class UserController {
             if (!user) {
                 throw new Error('Пользователь не найден');
             }
-
+            
+            let finalValueOfTransaction;
+            if (come === "Outcome") {
+                finalValueOfTransaction = -Math.abs(valueOfTransaction);
+            } else if (come === "Income") {
+                finalValueOfTransaction = Math.abs(valueOfTransaction);
+            } else {
+                finalValueOfTransaction = valueOfTransaction; // если come имеет другие значения
+            }
             const [numUpdatedRows, updatedTransaction] = await Transaction.update(
-                { come, valueOfTransaction, typeOfTransaction, dateOfTransaction },
+                { come, valueOfTransaction: finalValueOfTransaction, typeOfTransaction, dateOfTransaction },
                 { returning: true, where: { id: transactionID } } // Добавляем опцию returning: true для получения обновленной транзакции
             );
 
@@ -222,8 +230,7 @@ class UserController {
 
             const { categoryName, isIncome, userID } = req.body; // Извлечение данных из запроса
 
-            // Проверка наличия категории с таким же названием
-            const existingCategory = await typesOfTransactions.findOne({ where: { name: categoryName, userID: userID } });
+            const existingCategory = await typesOfTransactions.findOne({ where: { name: categoryName, userID: userID, isIncome: isIncome } });
             if (existingCategory) {
                 return res.status(400).json({ message: 'Категория с таким названием уже существует' });
             }

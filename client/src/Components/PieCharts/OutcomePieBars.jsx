@@ -34,6 +34,8 @@ const OutcomePieBar = ({ filteredTransactions }) => {
             label: `${type}`,
         }));
 
+        data.sort((a, b) => a.y - b.y);
+
         if (data.length > 0) {
             return (
                 <div>
@@ -49,7 +51,7 @@ const OutcomePieBar = ({ filteredTransactions }) => {
                             labelRadius={100}
                             barWidth={40}
                             style={{
-                                labels: { fontSize: 20, fill: "white" },
+                                labels: { fontSize: 12, fill: "white" },
                                 data: {
                                     fill: ({ datum }) => {
                                         const redValue = Math.floor(
