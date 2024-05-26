@@ -30,28 +30,34 @@ const ModalAddTrans = ({ setAddTransactionIsOpened, setIsLoading, addTransaction
     
     async function checkCategoryLimitation(transactionsData, transaction) {
         try {
+            // Получаем текущую дату
+            const currentDate = new Date();
+            const currentMonth = currentDate.getMonth();
+            const currentYear = currentDate.getFullYear();
+
+            // Проверяем, что транзакция на текущий месяц
+            if (new Date(transaction.dateOfTransaction).getMonth() !== currentMonth || new Date(transaction.dateOfTransaction).getFullYear() !== currentYear) {
+                return true; // Транзакция не на текущий месяц, пропускаем проверку
+            }
+
             if (transaction.come === 'Outcome') {
-                const currentDate = new Date();
-                const currentMonth = currentDate.getMonth();
-                const currentYear = currentDate.getFullYear();
-                console.log(currentMonth, currentYear, currentDate);
                 // Фильтруем транзакции по выбранной категории и текущему месяцу
                 const categoryTransactions = transactionsData.filter(trans =>
                     trans.typeOfTransaction === transaction.typeOfTransaction &&
                     new Date(trans.dateOfTransaction).getMonth() === currentMonth &&
                     new Date(trans.dateOfTransaction).getFullYear() === currentYear
                 );
-                console.log(categoryTransactions);
+
                 // Суммируем значения расходов
                 const totalExpenses = categoryTransactions.reduce((total, transaction) =>
                     total - (transaction.valueOfTransaction), 0);
-                console.log(totalExpenses);
+
                 // Получаем ограничение на категорию
-                const categoryLimitation = (typesOfOutcomes.find(type => type.name === transaction.typeOfTransaction).limitationValue);
+                const categoryLimitation = typesOfOutcomes.find(type => type.name === transaction.typeOfTransaction)?.limitationValue;
+
                 // Проверяем, превышено ли ограничение
-                console.log(categoryLimitation)
                 if (categoryLimitation && (totalExpenses > categoryLimitation)) {
-                    alert("Превышено ограничение на категорию: " + transaction.typeOfTransaction);
+                    alert("Превышено месячное ограничение на категорию: " + transaction.typeOfTransaction);
                     return false;
                 }
             }
@@ -61,6 +67,7 @@ const ModalAddTrans = ({ setAddTransactionIsOpened, setIsLoading, addTransaction
             return false;
         }
     }
+
 
 
 
@@ -104,9 +111,11 @@ const ModalAddTrans = ({ setAddTransactionIsOpened, setIsLoading, addTransaction
                 .then(res => {
                     const newTransaction = res.data.transaction;
                     setTransactions(prevTransactions => [...prevTransactions, newTransaction]);
+                    alert(res.data.message);
                 })
                 .catch(error => {
                     console.error('Произошла ошибка:', error);
+                    alert("Произошла ошибка!");
                 });
 
 

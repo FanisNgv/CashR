@@ -17,7 +17,7 @@ const ModalFilterRange = ({ setModalFilterIsOpened, expensesSum, incomesSum, set
     setExpensesSum(expenses.reduce((total, amount) => total + amount, 0));
     setIncomeSum(incomes.reduce((total, amount) => total + amount, 0));
     
-    setTotal((expensesSum + incomesSum).toFixed(2));
+    setTotal((expensesSum + incomesSum));
 
     useEffect(() => {
         if (transactions.length > 0) {

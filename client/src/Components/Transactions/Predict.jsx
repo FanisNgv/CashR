@@ -117,18 +117,23 @@ const Predict = () => {
                 return;
             }
             try {
-                const { data: response } = await axios.get('http://localhost:5000/auth/user', {
+                const userResponse = await fetch('http://localhost:5000/auth/user', {
                     headers: {
                         Authorization: `Bearer ${token}`,
                     },
                 });
 
+                if (!userResponse.ok) {
+                    throw new Error('Ошибка при получении данных пользователя');
+                }
+                const userData = await userResponse.json();
+
                 await setUser({
-                    id: response.id,
-                    lastname: response.lastname,
-                    firstname: response.firstname,
-                    email: response.email,
-                    balance: response.balance,
+                    id: userData.id,
+                    lastname: userData.lastname,
+                    firstname: userData.firstname,
+                    email: userData.email,
+                    balance: userData.balance,
                 });
 
                 const transactionsResponse = await fetch('http://localhost:5000/user/getAllTransactions', {
@@ -137,7 +142,7 @@ const Predict = () => {
                         Authorization: `Bearer ${token}`,
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({ userID: response.id }),
+                    body: JSON.stringify({ userID: userData.id }),
                 });
                 
                 const transactionsData = await transactionsResponse.json();
@@ -163,26 +168,32 @@ const Predict = () => {
     
     async function togglePredictTransactions() {
 
+        setIsLoading(true);
+
         if(monthlyTransactions.length <= 2){
             alert('Недостаточно данных для прогнозирования')
             return
         }
+        const token = localStorage.getItem('token');
+        if (!token) {
+            console.error('Token not found in localStorage');
+            return;
+        }
 
         try {
-            const ML_Response = await fetch('http://127.0.0.1:8080/predict', {
+            const ML_Prediction = await fetch('http://localhost:5000/user/getPredictions', {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json' // Добавление заголовка Content-Type
+                    Authorization: `Bearer ${token}`,
+                    'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ transactions: allTransactions }),
+                body: JSON.stringify({ userID: user.id }),
             });
-            // Проверяем, что запрос прошел успешно
-           // Преобразуем тело ответа в объект JSON
-        const data = await ML_Response.json();
 
+            const data = await ML_Prediction.json();
         // Извлекаем предсказанные значения из объекта data
-        const income_predicted_value = data.income_predicted_value;
-        const expense_predicted_value = data.expense_predicted_value;
+        const income_predicted_value = data.predictions.income_predicted_value;
+        const expense_predicted_value = data.predictions.expense_predicted_value;
 
         // Добавляем предсказанные значения для следующего месяца к monthlyTransactions
             // Добавляем предсказанные значения для следующего месяца к monthlyTransactions
@@ -197,9 +208,12 @@ const Predict = () => {
 
             // Используем spread оператор для добавления прогнозированных данных в existing monthlyTransactions
             setMonthlyTransactions(prevTransactions => [...prevTransactions, predictedMonthData]);
+            setIsLoading(false);
 
         } catch (error) {
             console.error(error.message);
+            setIsLoading(false);
+
         }
     }
     
@@ -212,6 +226,8 @@ const Predict = () => {
     function getDateValue(dateString) {
         return new Date(dateString).getTime();
     }
+
+    
 
     return (
         <div className="Transactions">
@@ -255,6 +271,8 @@ const Predict = () => {
                                 ticks: { size: 5, stroke: "white" }, // Стили меток оси
                                 axisLabel: { fontSize: 10, padding: 20 }, // Стили названия оси
                             }}
+                            
+
                         />
                         <VictoryAxis
                             dependentAxis

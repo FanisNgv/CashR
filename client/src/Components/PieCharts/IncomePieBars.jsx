@@ -34,6 +34,9 @@ const IncomePieBar = ({ filteredTransactions }) => {
             label: `${type}`,
         }));
 
+        // Сортировка данных по возрастанию значений y
+        data.sort((a, b) => a.y - b.y);
+
         if (data.length > 0) {
             return (
                 <div>
@@ -49,7 +52,7 @@ const IncomePieBar = ({ filteredTransactions }) => {
                             barWidth={40}
                             labelRadius={100}
                             style={{
-                                labels: { fontSize: 20, fill: "white" },
+                                labels: { fontSize: 12, fill: "white" },
                                 data: {
                                     fill: ({ datum }) => {
                                         const greenValue = Math.floor(

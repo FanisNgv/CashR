@@ -53,7 +53,7 @@ const ModalEditInfo = ({ setEditInfoActive, setIsLoading, editInfoActive }) => {
 
         setIsLoading(true);
         try {
-            axios.post('http://localhost:5000/user/updateUser', updateUser, {
+            axios.put('http://localhost:5000/user/updateUser', updateUser, {
                 headers: {
                     'Content-Type': 'application/json',
                     Authorization: `Bearer ${token}`,
@@ -62,9 +62,12 @@ const ModalEditInfo = ({ setEditInfoActive, setIsLoading, editInfoActive }) => {
                 .then(res => {
                     console.log(res.data.user);
                     setUser(res.data.user)
+                    alert(res.data.message); // Выводим сообщение от сервера
+
                 })
                 .catch(error => {
                     console.error('Произошла ошибка:', error);
+                    alert('Произошла ошибка на сервере');
                 });
 
         } catch (error) {
